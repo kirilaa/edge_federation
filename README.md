@@ -1,4 +1,4 @@
-#Edge Federation 
+Edge Federation 
 ======
 ## Code repository
 
