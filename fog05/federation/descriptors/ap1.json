@@ -1,0 +1,52 @@
+{
+    "id": "virtual_access_point_1",
+    "name": "hostapd01",
+    "computation_requirements": {
+        "cpu_arch": "x86_64",
+        "cpu_min_freq": 0,
+        "cpu_min_count": 1,
+        "ram_size_mb": 128.0,
+        "storage_size_gb": 5.0
+    },
+    "image": {
+        "uri": "file:///home/netcom/repository/hostapd01.tar.gz",
+        "checksum": "97585a10323eb85fa51bbacfa702b9e8826b3dfa3d959e7324a3cc018465e160",
+        "format": "tar.gz"
+    },
+    "storage": [],
+    "hypervisor": "LXD",
+    "migration_kind": "COLD",
+    "interfaces": [
+        {
+            "name": "mgmt",
+            "is_mgmt": false,
+            "if_type": "INTERNAL",
+            "mac_address": "be:ef:be:ef:00:02",
+            "virtual_interface": {
+                "intf_type": "VIRTIO",
+                "vpci": "0:0:0",
+                "bandwidth": 10
+            },
+            "cp_id": "hostapd01-cp1"
+        },
+        {
+            "name": "wlan0",
+            "is_mgmt": false,
+            "if_type": "EXTERNAL",
+            "virtual_interface": {
+                "intf_type": "PHYSICAL",
+                "vpci": "wlanVAP0",
+                "bandwidth": 10
+            }
+        }
+    ],
+    "io_ports": [],
+    "connection_points": [
+        {
+            "id": "hostapd01-cp1",
+            "name": "hostapd01_internal_cp1",
+            "vld_ref": "6cc2aa30-1dcf-4c93-a57e-433fd0bd498e"
+        }
+    ],
+    "depends_on": []
+}
