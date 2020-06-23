@@ -1,0 +1,19 @@
+
+
+In order to install fog05 0.2.0 you need to install the debian files for your distribution (Debian or Ubuntu => 18.04) 
+
+
+The correct order is:
+
+dpkg -i libzenoh-0.3.0-Linux.deb
+dpkg -i zenoh_0.3.0_amd64.deb
+dpkg -i fog05_0.2.0-1_amd64_<distro>.deb
+pip3 install fog05==0.2.0 -y 
+dpkg -i fog05-plugin-os-linux_0.2.0-1_amd64_<distro>.deb
+dpkg -i fog05-plugin-net-linuxbridge_0.2.0-1_amd64_<distro>.deb
+
+Then install the FDU plugin you need:
+
+eg. LXD containers:
+
+dpkg -i fog05-plugin-fdu-lxd_0.2.0-1_amd64_<distro>.deb

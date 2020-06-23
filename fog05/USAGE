@@ -1,0 +1,11 @@
+To start fog05 just use systemd:
+
+sudo systemctl start zenoh
+sudo systemctl start fos_agent
+sudo systemctl start fos_linux
+sudo systemctl start fos_linuxbridge
+
+Then you can start the installed plugins.
+Eg. LXD
+
+sudo systemctl start fos_lxd
