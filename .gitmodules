@@ -1,0 +1,6 @@
+[submodule "fog05/federation/sdk-python"]
+	path = fog05/federation/sdk-python
+	url = /home/netcom/edge_federation/fog05/federation/sdk-python
+[submodule "fog05/federation/api-python"]
+	path = fog05/federation/api-python
+	url = /home/netcom/edge_federation/fog05/federation/api-python/

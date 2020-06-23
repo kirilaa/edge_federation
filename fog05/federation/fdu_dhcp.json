@@ -9,7 +9,7 @@
         "storage_size_gb": 5.0
     },
     "image": {
-        "uri": "file:///home/ubuntu/federation/dhcp.tar.gz",
+        "uri": "file:///home/netcom/edge_federation/fog05/federation/dhcp.tar.gz",
         "checksum": "",
         "format": ""
     },
