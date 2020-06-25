@@ -13,11 +13,12 @@ import time
 
 DESC_FOLDER = 'descriptors'
 net_desc = ['net.json']
-descs_n1 = ['fdu_dhcp.json','ap1.json']
-descs_n2 = ['ap2.json']
+descs_d1 = ['fdu_dhcp.json','ap1.json']
+descs_d2 = ['ap2.json']
 
-n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
-n2 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
+d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
+d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog03
+d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 
 
 
@@ -83,9 +84,10 @@ def main(ip, ip2):
         print('UUID: {}'.format(n))
 
     input('Press to deploy net on consumer domain')
-    net_deploy(net_desc,a,n1)
+    net_deploy(net_desc,a,d1_n1)
+    net_deploy(net_desc,a,d1_n2)
     input('Press to deploy containers on consumer domain')
-    container_deploy(descs_n1,a)
+    container_deploy(descs_d1,a)
    
 
     input('Press to move client to second domain')
@@ -97,12 +99,12 @@ def main(ip, ip2):
         a2.network.add_network(net_info)
         net_info2 = get_net_info(a2,net_info['uuid'])
         print('Net info {}'.format(net_info2))
-        a2.network.add_network_to_node(net_info2['uuid'], n2)
+        a2.network.add_network_to_node(net_info2['uuid'], d2_n1)
 
 
     input('press enter to onboard on provider domain')
   
-    container_deploy(descs_n2,a2)
+    container_deploy(descs_d2,a2)
     
     print("bye")
     
