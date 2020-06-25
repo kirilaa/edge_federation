@@ -96,7 +96,7 @@ def GetServiceInfo(service_id, is_provider):
                     provider= is_provider, call_address= block_address).call()
     # if web3.toText(service_info[0]) == service_id:
     requirement = web3.toText(service_info[1])
-    net_d_info = {"uuid": (filterOutBytes(web3.toText(service_info[2])) + filterOutBytes(web3.toText(service_info[3]))),\
+    net_d_info = {"uuid": (filterOutBytes(web3.toText(service_info[2]))+ "-" + filterOutBytes(web3.toText(service_info[3]))),\
             "name": filterOutBytes(web3.toText(service_info[4])), \
             "net_type": filterOutBytes(web3.toText(service_info[5])), \
             "is_mgmt": service_info[6]}
