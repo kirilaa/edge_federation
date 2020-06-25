@@ -286,11 +286,11 @@ def provider(ip, fdufile, netfile):
         print(net_d)
         # Create network based on the descriptor
         # input("Press enter to create network")
-        a.network.add_network(net_d)
         # Get info if the network is created
         net_info = get_net_info(a2,net_d['uuid'])
         print('Net info {}'.format(net_info))
         
+        a.network.add_network(net_info)
         # Add the created network to the node (n1)
         input('press enter to network creation')
         a.network.add_network_to_node(net_info['uuid'], n2)
