@@ -30,6 +30,9 @@ eth_address = web3.eth.accounts
 #### GETH COMMANDS:
 # web3.fromWei(web3.eth.getBalance(web3.eth.coinbase));
 # web3.eth.sendTransaction({from:web3.eth.coinbase,to:web3.eth.accounts[2], value:web3.toWei(10, "ether")});
+# {'uuid': '6cc2aa30-1dcf-4c93-a57e-433fd0bd498e', 'name': 'net1', 'net_type': 'ELAN', 'is_mgmt': False, 'port': 4789, 'vni': 1170838, 'mcast_addr': '239.0.202.79'}
+# from web3.auto.gethdev import w3
+# >>> w3.is_encodable('bytes2', b'12')
 
 print("Etherbase:", coinbase)
 # input("\nGet info of Operator (ENTER)")
