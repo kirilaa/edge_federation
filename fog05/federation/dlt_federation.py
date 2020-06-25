@@ -16,7 +16,7 @@ with open(abi_path+"Federation.json") as c_json:
     contract_json = json.load(c_json)
 
 contract_abi = contract_json["abi"]
-contract_address = Web3.toChecksumAddress('0x32318DDE35e60228B112Ee12CF645Eb2e726281f')
+contract_address = Web3.toChecksumAddress('0xc76d33f788a17fe014b9E8D00505FA51F9804f97')
 
 Federation_contract = web3.eth.contract(abi= contract_abi, address = contract_address)
 
@@ -47,8 +47,15 @@ def get_net_info(api, netid):
         return ni[0]
     return None
 
+def filterOutBytes(string):
+    result = string.split('\x00')
+    if len(result)>0:
+        return result[0]
+    else:
+        return string
+
 def RegisterDomain(domain_name):
-    tx_hash = Federation_contract.functions.addOperator(Web3.toBytes(text=domain_name)).transact({'from': coinbase})
+    tx_hash = Federation_contract.functions.addOperator(Web3.toBytes(text=domain_name)).transact({'from': block_address})
     return tx_hash
 
 def AnnounceService(net_info, service_id):
@@ -89,9 +96,9 @@ def GetServiceInfo(service_id, is_provider):
                     provider= is_provider, call_address= block_address).call()
     # if web3.toText(service_info[0]) == service_id:
     requirement = web3.toText(service_info[1])
-    net_d_info = {"uuid": (web3.toText(service_info[2]) + web3.toText(service_info[3])),\
-            "name": web3.toText(service_info[4]), \
-            "net_type": web3.toText(service_info[5]), \
+    net_d_info = {"uuid": (filterOutBytes(web3.toText(service_info[2])) + filterOutBytes(web3.toText(service_info[3]))),\
+            "name": filterOutBytes(web3.toText(service_info[4])), \
+            "net_type": filterOutBytes(web3.toText(service_info[5])), \
             "is_mgmt": service_info[6]}
     return net_d_info
     
@@ -130,66 +137,67 @@ def ServiceDeployed(service_id):
 
 def consumer(ip, fdufile, netfile):
     # Access the fog05 domain web socket
-    # a = FIMAPI(ip)
-    # # Get the nodes from the domain 
-    # nodes = a.node.list()
-    # if len(nodes) == 0:
-    #     print('No nodes')
-    #     exit(-1)
-    # # Print the nodes from the domain
-    # print('Nodes:')
-    # for n in nodes:
-    #     print('UUID: {}'.format(n))
+    a = FIMAPI(ip)
+    # Get the nodes from the domain 
+    nodes = a.node.list()
+    if len(nodes) == 0:
+        print('No nodes')
+        exit(-1)
+    # Print the nodes from the domain
+    print('Nodes:')
+    for n in nodes:
+        print('UUID: {}'.format(n))
     
-    # # Load the FDU (descriptors)
-    # fdu_d = FDU(json.loads(read_file(fdufile)))
-    # # Load the network descriptor
-    # net_d = json.loads(read_file(netfile))
-    # n_uuid = net_d.get('uuid')
+    # Load the FDU (descriptors)
+    fdu_d = FDU(json.loads(read_file(fdufile)))
+    # Load the network descriptor
+    net_d = json.loads(read_file(netfile))
+    n_uuid = net_d.get('uuid')
 
-    # # Create network based on the descriptor
-    # input("Press enter to create network")
-    # a.network.add_network(net_d)
-    # # Get info if the network is created
-    # net_info = get_net_info(a,net_d['uuid'])
-    # print('Net info {}'.format(net_info))
+    # Create network based on the descriptor
+    input("Press enter to create network")
+    a.network.add_network(net_d)
+    # Get info if the network is created
+    net_info = get_net_info(a,net_d['uuid'])
+    print('Net info {}'.format(net_info))
     
-    # # Add the created network to the node (n1)
-    # input('press enter to network creation')
-    # a.network.add_network_to_node(net_info['uuid'], n1)
+    # Add the created network to the node (n1)
+    input('press enter to network creation')
+    a.network.add_network_to_node(net_info['uuid'], n1)
 
-    # #  On-board the FDU
-    # input('press enter to onboard descriptor')
-    # res = a.fdu.onboard(fdu_d)
-    # # Get the identifier of the on-boarded FDU
-    # e_uuid = res.get_uuid()
-    # # Define an instance of the on-boarded FDU
-    # input('Press enter to define')
-    # inst_info = a.fdu.define(e_uuid)
-    # # Get the ID of the defined FDU instance
-    # print(inst_info.to_json())
-    # instid = inst_info.get_uuid()
+    #  On-board the FDU
+    input('press enter to onboard descriptor')
+    res = a.fdu.onboard(fdu_d)
+    # Get the identifier of the on-boarded FDU
+    e_uuid = res.get_uuid()
+    # Define an instance of the on-boarded FDU
+    input('Press enter to define')
+    inst_info = a.fdu.define(e_uuid)
+    # Get the ID of the defined FDU instance
+    print(inst_info.to_json())
+    instid = inst_info.get_uuid()
 
-    # # Configure the defined FDU instance
-    # input('Press enter to configure')
-    # a.fdu.configure(instid)
+    # Configure the defined FDU instance
+    input('Press enter to configure')
+    a.fdu.configure(instid)
 
-    # # Start the configured FDU instance
-    # input('Press enter to start')
-    # a.fdu.start(instid)
-    # # Get the info of the started FDU instance
-    # input('Press get info')
-    # info = a.fdu.instance_info(instid)
-    # print(info.to_json())
+    # Start the configured FDU instance
+    input('Press enter to start')
+    a.fdu.start(instid)
+    # Get the info of the started FDU instance
+    input('Press get info')
+    info = a.fdu.instance_info(instid)
+    print(info.to_json())
 
 ########## FEDERATION STARTS HERE ###########################################################
     debug_txt = input("\nUse service_id:")
     service_id = debug_txt
-    net_d = {"uuid": "6cc2aa30-1dcf-4c93-a57e-433fd0bd498e",\
-            "name": "net1",\
-            "net_type": "ELAN",\
-            "is_mgmt": False
-            }
+    print(net_d)
+    # net_d = {"uuid": "6cc2aa30-1dcf-4c93-a57e-433fd0bd498e",\
+    #         "name": "net1",\
+    #         "net_type": "ELAN",\
+    #         "is_mgmt": False
+    #         }
 
     print("\nSERVICE_ID:",service_id)
     debug_txt = input("\nCreate Service anouncement....(ENTER)")
@@ -218,18 +226,31 @@ def consumer(ip, fdufile, netfile):
     print("SERVICE FEDERATED!")
     print("Time it took:", int(end-start))
 ########## FEDERATION FINISH HERE ###########################################################
-    # input('Press to federate client to second domain')
-    # # Get the ID of the network, to be instantiated in the second domain
-    # net_info = get_net_info(a,net_d['uuid'])
-    # input('Press to create federated vxlan to second domain')
-    # a.fdu.terminate(instid)
-    # a.fdu.offload(e_uuid)
-    # input("Press enter to remove network")
-    # a.network.remove_network_from_node(n_uuid, n1)
-    # a.network.remove_network(n_uuid)
+
+    input('Press enter to terminate')
+    a.fdu.terminate(instid)
+    a.fdu.offload(e_uuid)
+    input("Press enter to remove network")
+    a.network.remove_network_from_node(n_uuid, n1)
+    a.network.remove_network(n_uuid)
+    
     exit(0)
 
 def provider(ip, fdufile, netfile):
+    a = FIMAPI(ip)
+    # Get the nodes from the domain 
+    nodes = a.node.list()
+    if len(nodes) == 0:
+        print('No nodes')
+        exit(-1)
+    # Print the nodes from the domain
+    print('Nodes:')
+    for n in nodes:
+        print('UUID: {}'.format(n))
+    
+    # Load the FDU (descriptors)
+    fdu_d = FDU(json.loads(read_file(fdufile)))
+
     debug_txt = input("\nBegin listening?")
     service_id = ''
     print("\nSERVICE_ID:",service_id)
@@ -237,14 +258,15 @@ def provider(ip, fdufile, netfile):
     newService_event = ServiceAnnouncementEvent()
     newService = False
     open_services = []
+    print("Waiting for federation event....")
     while newService == False:
         new_events = newService_event.get_all_entries()
         for event in new_events:
             service_id = web3.toText(event['args']['id'])
             if GetServiceState(service_id) == 0:
                 open_services.append(service_id)
-        print("OPEN = ", len(open_services))
         if len(open_services) > 0:
+            print("OPEN = ", len(open_services))
             newService = True
     service_id = open_services[-1]
     winnerChosen_event = PlaceBid(service_id)
@@ -261,11 +283,50 @@ def provider(ip, fdufile, netfile):
         net_d = GetServiceInfo(service_id, True)
 ########## FEDERATED SERVICE DEPLOYEMENT HERE ###########################################################
         print(net_d)
+        # Create network based on the descriptor
+        # input("Press enter to create network")
+        a.network.add_network(net_d)
+        # Get info if the network is created
+        net_info = get_net_info(a,net_d['uuid'])
+        print('Net info {}'.format(net_info))
+        
+        # Add the created network to the node (n1)
+        input('press enter to network creation')
+        a.network.add_network_to_node(net_info['uuid'], n2)
+
+        #  On-board the FDU
+        input('press enter to onboard descriptor')
+        res = a.fdu.onboard(fdu_d)
+        # Get the identifier of the on-boarded FDU
+        e_uuid = res.get_uuid()
+        # Define an instance of the on-boarded FDU
+        input('Press enter to define')
+        inst_info = a.fdu.define(e_uuid)
+        # Get the ID of the defined FDU instance
+        print(inst_info.to_json())
+        instid = inst_info.get_uuid()
+
+        # Configure the defined FDU instance
+        input('Press enter to configure')
+        a.fdu.configure(instid)
+
+        # Start the configured FDU instance
+        input('Press enter to start')
+        a.fdu.start(instid)
+        # Get the info of the started FDU instance
+        input('Press get info')
+        info = a.fdu.instance_info(instid)
+        print(info.to_json())
 
 ######################### UNTIL HERE ####################################################################
         ServiceDeployed(service_id)
     else:
         print("I am not a Winner")
+
+    input('Press enter to terminate')
+
+    a.fdu.terminate(instid)
+    a.fdu.offload(e_uuid)
     exit(0)
 
 if __name__ == '__main__':

@@ -20,7 +20,7 @@ with open(abi_path+"Federation.json") as c_json:
     contract_json = json.load(c_json)
 
 contract_abi = contract_json["abi"]
-contract_address = Web3.toChecksumAddress('0x32318DDE35e60228B112Ee12CF645Eb2e726281f')
+contract_address = Web3.toChecksumAddress('0xc76d33f788a17fe014b9E8D00505FA51F9804f97')
 
 Federation_contract = web3.eth.contract(abi= contract_abi, address = contract_address)
 

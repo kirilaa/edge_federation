@@ -27701,12 +27701,12 @@
         }
       },
       "links": {},
-      "address": "0x32318DDE35e60228B112Ee12CF645Eb2e726281f",
-      "transactionHash": "0xee234db6f6b112480b7fc04a9fd79b44e755ef15155b453b04135b7b019fb957"
+      "address": "0xc76d33f788a17fe014b9E8D00505FA51F9804f97",
+      "transactionHash": "0x2e620f137404ed9d1a07cec97bc9ca99a18800e11c5d683ba23be06cc7bb4034"
     }
   },
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-06-24T15:58:08.326Z",
+  "updatedAt": "2020-06-25T08:35:01.636Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}
