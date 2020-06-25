@@ -193,7 +193,6 @@ def consumer(ip, fdufile, netfile):
     debug_txt = input("\nUse service_id:")
     service_id = debug_txt
     print(net_d)
-    ned["net_type"] = ip
     # net_d = {"uuid": "6cc2aa30-1dcf-4c93-a57e-433fd0bd498e",\
     #         "name": "net1",\
     #         "net_type": "ELAN",\
@@ -239,7 +238,7 @@ def consumer(ip, fdufile, netfile):
 
 def provider(ip, fdufile, netfile):
     a = FIMAPI(ip)
-    # a2 = FIMAPI('163.117.139.226')
+    a2 = FIMAPI('163.117.139.226')
     # Get the nodes from the domain 
     nodes = a.node.list()
     if len(nodes) == 0:
@@ -287,14 +286,13 @@ def provider(ip, fdufile, netfile):
         print(net_d)
         if net_d['uuid'] == "6cc2aa30-1dcf-4c93-a57e-433fd0bd498e": 
             print("UUID match")
-            a2 = FIMAPI(net_d["net_type"])
         else:
             print("UUID does not match")
 
         # Create network based on the descriptor
         # input("Press enter to create network")
         # Get info if the network is created
-        print(net_d['uuid'], net_d['net_type'])
+        print(net_d['uuid'])
         print(a2.network.list())
         net_info = get_net_info(a2,net_d['uuid'])
         print('Net info {}'.format(net_info))
