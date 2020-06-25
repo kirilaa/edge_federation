@@ -238,7 +238,7 @@ def consumer(ip, fdufile, netfile):
 
 def provider(ip, fdufile, netfile):
     a = FIMAPI(ip)
-    a2 = FIMAPI("163.117.139.226")
+    a2 = FIMAPI('163.117.139.226')
     # Get the nodes from the domain 
     nodes = a.node.list()
     if len(nodes) == 0:
@@ -284,10 +284,16 @@ def provider(ip, fdufile, netfile):
         net_d = GetServiceInfo(service_id, True)
 ########## FEDERATED SERVICE DEPLOYEMENT HERE ###########################################################
         print(net_d)
+        if net_d['uuid'] == "6cc2aa30-1dcf-4c93-a57e-433fd0bd498e": 
+            print("UUID match")
+        else:
+            print("UUID does not match")
+
         # Create network based on the descriptor
         # input("Press enter to create network")
         # Get info if the network is created
         print(net_d['uuid'])
+        print(a2.network.list())
         net_info = get_net_info(a2,net_d['uuid'])
         print('Net info {}'.format(net_info))
         
