@@ -287,6 +287,7 @@ def provider(ip, fdufile, netfile):
         # Create network based on the descriptor
         # input("Press enter to create network")
         # Get info if the network is created
+        print(net_d['uuid'])
         net_info = get_net_info(a2,net_d['uuid'])
         print('Net info {}'.format(net_info))
         
