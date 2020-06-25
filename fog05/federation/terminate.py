@@ -75,4 +75,4 @@ if __name__ == '__main__':
         print('[Usage] {} <ip:port domain1> <ip:port domain2>'.format(
             sys.argv[0]))
         exit(0)
-    main(sys.argv[1])
+    main(sys.argv[1],sys.argv[2])

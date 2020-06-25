@@ -21,7 +21,7 @@ n2 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 
 
 
-def read_file(filepath):
+def read(filepath):
     with open(filepath, 'r') as f:
         data = f.read()
     return data
@@ -68,7 +68,7 @@ def container_deploy(descs,api):
         print(info.to_json())
 
 
-def main(ip, ip2, fdufile, fdu2, netfile):
+def main(ip, ip2):
     a = FIMAPI(ip)
 
     a2 = FIMAPI(ip2)
@@ -82,22 +82,25 @@ def main(ip, ip2, fdufile, fdu2, netfile):
     for n in nodes:
         print('UUID: {}'.format(n))
 
-
+    input('Press to deploy net on consumer domain')
     net_deploy(net_desc,a,n1)
-    container_deploy(descs,a)
+    input('Press to deploy containers on consumer domain')
+    container_deploy(descs_n1,a)
    
 
     input('Press to move client to second domain')
-    net_info = get_net_info(a,net_d['uuid'])
-    input('Press to create federated vxlan to second domain')
-    a2.network.add_network(net_info)
+    for d in net_desc:
+        path_d = os.path.join(DESC_FOLDER,d)
+        net_d = json.loads(read(path_d))
+        net_info = get_net_info(a,net_d['uuid'])
+        input('Press to create federated vxlan to second domain')
+        a2.network.add_network(net_info)
+        net_info2 = get_net_info(a2,net_info['uuid'])
+        print('Net info {}'.format(net_info2))
+        a2.network.add_network_to_node(net_info2['uuid'], n2)
 
-    net_info2 = get_net_info(a2,net_info['uuid'])
-    print('Net info {}'.format(net_info2))
-    a2.network.add_network_to_node(net_info2['uuid'], n2)
 
-
-    input('press enter to onboard second descriptor')
+    input('press enter to onboard on provider domain')
   
     container_deploy(descs_n2,a2)
     
