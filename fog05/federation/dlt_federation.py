@@ -192,8 +192,8 @@ def consumer(ip, fdufile, netfile):
 ########## FEDERATION STARTS HERE ###########################################################
     debug_txt = input("\nUse service_id:")
     service_id = debug_txt
+    net_d["net_type"] = ip
     print(net_d)
-    ned["net_type"] = ip
     # net_d = {"uuid": "6cc2aa30-1dcf-4c93-a57e-433fd0bd498e",\
     #         "name": "net1",\
     #         "net_type": "ELAN",\
