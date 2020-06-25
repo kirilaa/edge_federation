@@ -83,7 +83,7 @@ def main(ip, ip2, fdufile, fdu2, netfile):
         print('UUID: {}'.format(n))
 
 
-    net_deploy(net_desc,a)
+    net_deploy(net_desc,a,n1)
     container_deploy(descs,a)
    
 
@@ -100,17 +100,9 @@ def main(ip, ip2, fdufile, fdu2, netfile):
     input('press enter to onboard second descriptor')
   
     container_deploy(descs_n2,a2)
-  
-    input('Press enter to terminate')
-
-    a.fdu.terminate(instid)
-    a.fdu.offload(e_uuid)
-    a2.fdu.terminate(s_instid)
-    a2.fdu.offload(s_e_uuid)
-    input("Press enter to remove network")
-    a.network.remove_network_from_node(n_uuid, n1)
-    a.network.remove_network(n_uuid)
-
+    
+    print("bye")
+    
     exit(0)
 
 
