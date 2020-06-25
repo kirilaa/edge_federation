@@ -331,6 +331,7 @@ def provider(ip, fdufile, netfile):
 
 if __name__ == '__main__':
     print("Blockchin addresses:", eth_address)
+    print(sys.argv)
     if len(sys.argv) < 5:
         print('[Usage] {} <flag_consumer_or_provider> <first yaks ip:port>  <path to fdu descripto> <path to net descriptor> -register(optional)'.format(
             sys.argv[0]))
