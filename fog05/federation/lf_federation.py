@@ -49,7 +49,6 @@ def main(ip, ip2, fdufile, fdu2, netfile):
     n_uuid = net_d.get('uuid')
 
 
-
     n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
     n2 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 

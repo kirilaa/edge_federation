@@ -12,7 +12,7 @@ import time
 #
 
 DESC_FOLDER = 'descriptors'
-net_desc = ['vnet.json']
+net_desc = ['net.json']
 descs_n1 = ['fdu_dhcp.json','ap1.json']
 descs_n2 = ['ap2.json']
 
@@ -83,7 +83,7 @@ def main(ip, ip2, fdufile, fdu2, netfile):
         print('UUID: {}'.format(n))
 
 
-    net_deploy(net_desc,a,n1)
+    net_deploy(net_desc,a)
     container_deploy(descs,a)
    
 

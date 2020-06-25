@@ -35,7 +35,7 @@
             "if_type": "EXTERNAL",
             "virtual_interface": {
                 "intf_type": "PHYSICAL",
-                "vpci": "wlanVAP0",
+                "vpci": "wlxb0487a91819e",
                 "bandwidth": 10
             }
         }
