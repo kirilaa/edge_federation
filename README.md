@@ -2,5 +2,5 @@ Edge Federation
 ======
 ## Code repository
 
-Authors: Kiril & Milan
+Authors: Kiril, Milan, Gabriele
 
