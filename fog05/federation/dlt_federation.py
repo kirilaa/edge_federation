@@ -31,8 +31,8 @@ service_id = ""
 #  Update n1 and n2 according to your node ids in the two domains.
 #
 
-n1 = '22a3296a-61d2-469f-9c16-aad648575798' #fos1
-n2 = '3e2552e6-4e79-463d-a252-464884a27847' #fos2
+n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
+n2 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 
 def read_file(filepath):
     with open(filepath, 'r') as f:
