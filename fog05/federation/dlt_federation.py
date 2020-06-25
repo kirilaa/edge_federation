@@ -238,6 +238,7 @@ def consumer(ip, fdufile, netfile):
 
 def provider(ip, fdufile, netfile):
     a = FIMAPI(ip)
+    a2 = FIMAPI("163.117.139.226")
     # Get the nodes from the domain 
     nodes = a.node.list()
     if len(nodes) == 0:
@@ -287,7 +288,7 @@ def provider(ip, fdufile, netfile):
         # input("Press enter to create network")
         a.network.add_network(net_d)
         # Get info if the network is created
-        net_info = get_net_info(a,net_d['uuid'])
+        net_info = get_net_info(a2,net_d['uuid'])
         print('Net info {}'.format(net_info))
         
         # Add the created network to the node (n1)
