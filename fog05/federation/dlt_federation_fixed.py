@@ -253,7 +253,7 @@ def consumer(trusty):
     print("\nSERVICE_ID:",service_id)
     debug_txt = input("\nCreate Service anouncement....(ENTER)")
     start = time.time()
-    bids_event = AnnounceService(net_d, service_id, trusty)
+    bids_event = AnnounceService(net_info, service_id, trusty)
     bidderArrived = False
     while bidderArrived == False:
         new_events = bids_event.get_all_entries()
