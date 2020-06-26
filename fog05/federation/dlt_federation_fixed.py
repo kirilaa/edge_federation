@@ -392,9 +392,9 @@ if __name__ == '__main__':
         print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty> -register(optional)'.format(
             sys.argv[0]))
         exit(0)
-    if sys.argv[1] == 'consumer' and len(sys.argv) <= 3:
+    if sys.argv[1] == 'consumer' and len(sys.argv) <= 4:
         block_address = coinbase
-        if len(sys.argv) >= 3 and sys.argv[2] == "-register":
+        if len(sys.argv) == 3 and sys.argv[3] == "-register":
             print(sys.argv[1], sys.argv[2])
             domain_name = "AD1"
             try:
