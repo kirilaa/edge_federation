@@ -110,7 +110,7 @@ def packNetData(net_info):
         net["uuid_2"] = uuid[3] + "-" + uuid[4]
     net['name'] = net_info['name']+';'+net_info['net_type']+';'+str(net_info['port'])+';'+str(net_info['vni'])
     net_name_bytes = Web3.toBytes(text= net['name'])
-    print("Packed OK") if Web3.is_encodable('bytes32', value= net_name_bytes) else print("Packing failed!")
+    print("Packed OK") if Web3.is_encodable(_type= 'bytes32', value= net_name_bytes) else print("Packing failed!")
     net['net_type'] = net_info['mcast_addr']
     net['is_mgmt'] = net_info['is_mgmt']
     return net
