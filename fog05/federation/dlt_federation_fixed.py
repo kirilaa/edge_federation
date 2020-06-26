@@ -356,6 +356,7 @@ def provider():
             print('Net info {}'.format(net_info))
         else:
             print("Untrusty federation")
+            net_info = net_d
             
         # Create network based on the descriptor
         # input("Press enter to create network")
