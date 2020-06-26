@@ -351,6 +351,9 @@ def provider():
             print("Trusty federation")
             # a2 = FIMAPI(net_d["net_type"])
             consumer_domain = FIMAPI(net_d["net_type"])
+            net_info = get_net_info(consumer_domain,net_d['uuid'])
+            print(consumer_domain.network.list())
+            print('Net info {}'.format(net_info))
         else:
             print("Untrusty federation")
             
@@ -358,9 +361,6 @@ def provider():
         # input("Press enter to create network")
         # Get info if the network is created
         print(net_d['uuid'], net_d['net_type'])
-        print(consumer_domain.network.list())
-        net_info = get_net_info(consumer_domain,net_d['uuid'])
-        print('Net info {}'.format(net_info))
         
         provider_domain.network.add_network(net_info)
         # Add the created network to the node (n1)
