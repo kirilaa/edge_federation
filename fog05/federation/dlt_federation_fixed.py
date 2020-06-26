@@ -49,6 +49,10 @@ def read_file(filepath):
         data = f.read()
     return data
 
+def read(filepath):
+    with open(filepath, 'r') as f:
+        data = f.read()
+    return data
 
 def get_net_info(api, netid):
     nets = api.network.list()
