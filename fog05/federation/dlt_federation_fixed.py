@@ -135,20 +135,28 @@ def RegisterDomain(domain_name):
 def AnnounceService(net_info, service_id, trusty):
     if trusty == 'untrusty':
         net_info = packNetData(net_info)
+        new_service = Federation_contract.functions.AnnounceService(\
+        _requirements= web3.toBytes(text = trusty),\
+        _id = web3.toBytes(text = service_id),\
+        endpoint_uuid_1= web3.toBytes(text = net_info["uuid_1"]),\
+        endpoint_uuid_2= web3.toBytes(text = net_info["uuid_2"]),\
+        endpoint_name= web3.toBytes(text = net_info["name"]),\
+        endpoint_net_type= web3.toBytes(text = net_info["net_type"]),\
+        endpoint_is_mgmt= net_info["is_mgmt"]).transact({'from':block_address})
     else:
         uuid = net_info['uuid'].split('-')
         if len(uuid)< 6:
             e_uuid_1 = uuid[0] + "-" + uuid[1] + "-" + uuid[2]
             e_uuid_2 = uuid[3] + "-" + uuid[4]
-    print("Service announced with id: ",service_id )
-    new_service = Federation_contract.functions.AnnounceService(\
-    _requirements= web3.toBytes(text = trusty),\
-    _id = web3.toBytes(text = service_id),\
-    endpoint_uuid_1= web3.toBytes(text = e_uuid_1),\
-    endpoint_uuid_2= web3.toBytes(text = e_uuid_2),\
-    endpoint_name= web3.toBytes(text = net_info["name"]),\
-    endpoint_net_type= web3.toBytes(text = net_info["net_type"]),\
-    endpoint_is_mgmt= net_info["is_mgmt"]).transact({'from':block_address})
+        print("Service announced with id: ",service_id )
+        new_service = Federation_contract.functions.AnnounceService(\
+        _requirements= web3.toBytes(text = trusty),\
+        _id = web3.toBytes(text = service_id),\
+        endpoint_uuid_1= web3.toBytes(text = e_uuid_1),\
+        endpoint_uuid_2= web3.toBytes(text = e_uuid_2),\
+        endpoint_name= web3.toBytes(text = net_info["name"]),\
+        endpoint_net_type= web3.toBytes(text = net_info["net_type"]),\
+        endpoint_is_mgmt= net_info["is_mgmt"]).transact({'from':block_address})
     block = web3.eth.getBlock('latest')
     blocknumber = block['number']
     #event_filter = Federation_contract.events.NewBid.createFilter(fromBlock=web3.toHex(blocknumber), argument_filters={'_id':web3.toBytes(text= service_id)})
