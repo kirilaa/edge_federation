@@ -388,41 +388,72 @@ def provider():
 if __name__ == '__main__':
     print("Blockchin addresses:", eth_address)
     print(sys.argv)
-    if len(sys.argv) < 1:
+    if len(sys.argv) < 2:
         print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty> -register(optional)'.format(
             sys.argv[0]))
         exit(0)
-    if sys.argv[1] == 'consumer' and len(sys.argv) <= 4:
+    
+    if sys.argv[1] == 'consumer':
         block_address = coinbase
-        if len(sys.argv) == 3 and sys.argv[3] == "-register":
-            print(sys.argv[1], sys.argv[2])
-            domain_name = "AD1"
-            try:
-                print("Registering....")
-                tx_hash = RegisterDomain(domain_name)
-            except ValueError as e:
-                print(e)
-            finally:
-                print("Starting consumer domain....")
-                consumer(sys.argv[2])
-        elif sys.argv[2] == 'trusty' or sys.argv[2] == 'untrusty':
+        domain_name = "AD1"
+        print(sys.argv[1], sys.argv[2])
+        try:
+            print("Registering....")
+            tx_hash = RegisterDomain(domain_name)
+        except ValueError as e:
+            print(e)
+        finally:
             print("Starting consumer domain....")
-            consumer(sys.argv[2])
-        else:
-            print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty> -register(optional)'.format(sys.argv[0]))
-            exit(0)
+            if sys.argv[2] == 'trusty' or sys.argv[2] == 'untrusty':
+                consumer(sys.argv[2])
+            else:
+                print("Please use \'trusty\' or \'untrusty\' for the argument {}" .format(sys.argv[2]))
+                exit(0)
     elif sys.argv[1] == 'provider':
         block_address = eth_address[1]
-        if len(sys.argv) >= 2 and sys.argv[2] == "-register":
-            domain_name = "AD2"
-            try:
-                print("Registering....")
-                tx_hash = RegisterDomain(domain_name)
-            except ValueError as e:
-                print(e)
-            finally:
-                print("Starting provider domain....")
-                provider()
-        else:
+        domain_name = "AD2"
+        try:
+            print("Registering....")
+            tx_hash = RegisterDomain(domain_name)
+        except ValueError as e:
+            print(e)
+        finally:
             print("Starting provider domain....")
             provider()
+    else:
+        exit(0)
+
+    # if sys.argv[1] == 'consumer' and len(sys.argv) <= 4:
+    #     block_address = coinbase
+    #     if len(sys.argv) == 3 and sys.argv[3] == "-register":
+    #         print(sys.argv[1], sys.argv[2])
+    #         domain_name = "AD1"
+    #         try:
+    #             print("Registering....")
+    #             tx_hash = RegisterDomain(domain_name)
+    #         except ValueError as e:
+    #             print(e)
+    #         finally:
+    #             print("Starting consumer domain....")
+    #             consumer(sys.argv[2])
+    #     elif sys.argv[2] == 'trusty' or sys.argv[2] == 'untrusty':
+    #         print("Starting consumer domain....")
+    #         consumer(sys.argv[2])
+    #     else:
+    #         print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty> -register(optional)'.format(sys.argv[0]))
+    #         exit(0)
+    # elif sys.argv[1] == 'provider':
+    #     block_address = eth_address[1]
+    #     if len(sys.argv) >= 2 and sys.argv[2] == "-register":
+    #         domain_name = "AD2"
+    #         try:
+    #             print("Registering....")
+    #             tx_hash = RegisterDomain(domain_name)
+    #         except ValueError as e:
+    #             print(e)
+    #         finally:
+    #             print("Starting provider domain....")
+    #             provider()
+    #     else:
+    #         print("Starting provider domain....")
+    #         provider()
