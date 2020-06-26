@@ -188,7 +188,7 @@ def GetServiceInfo(service_id, is_provider):
                 "name": filterOutBytes(web3.toText(service_info[4])), \
                 "net_type": filterOutBytes(web3.toText(service_info[5])), \
                 "is_mgmt": service_info[6],
-                "privacy": 'trusty'}
+                "privacy": requirement}
         
     return net_d_info
     
