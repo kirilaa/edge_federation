@@ -74,7 +74,9 @@ def net_deploy(network_desc,api,node):
         net_d = json.loads(read(path_d))
         n_uuid = net_d.get('uuid')
         input("Press enter to create network")
-        api.network.add_network(net_d)
+        net_info = get_net_info(api,net_d['uuid'])
+        if net_info is None:
+            api.network.add_network(net_d)
         net_info = get_net_info(api,net_d['uuid'])
         print('Net info {}'.format(net_info))
         input('press enter to network creation')
@@ -232,6 +234,7 @@ def consumer(trusty):
     net_deploy(net_desc,a,d1_n2)
     input('Press to deploy containers on consumer domain')
     container_deploy(descs_d1,a)
+    path_d = os.path.join(DESC_FOLDER,net_desc[0])
     net_d = json.loads(read(path_d))
     net_info = get_net_info(a,net_d['uuid'])
 
