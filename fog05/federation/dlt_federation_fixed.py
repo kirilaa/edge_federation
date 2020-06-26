@@ -242,7 +242,7 @@ def consumer(trusty):
     debug_txt = input("\nUse service_id:")
     service_id = debug_txt
     if trusty == 'trusty':
-        net_d["net_type"] = ip
+        net_d["net_type"] = IP1
     print(net_d)
     # net_d = {"uuid": "6cc2aa30-1dcf-4c93-a57e-433fd0bd498e",\
     #         "name": "net1",\
