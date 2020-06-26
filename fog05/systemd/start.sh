@@ -1,5 +1,9 @@
 #!/bin/bash
 
+sudo modprobe -r ath10k_pci
+sleep 2
+sudo modprobe -a ath10k_pci
+
 sudo systemctl start zenoh
 
 sleep 1
