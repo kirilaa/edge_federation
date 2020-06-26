@@ -392,7 +392,7 @@ if __name__ == '__main__':
         print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty> -register(optional)'.format(
             sys.argv[0]))
         exit(0)
-    if sys.argv[1] == 'consumer' and len(sys.argv) < 2:
+    if sys.argv[1] == 'consumer' and len(sys.argv) <= 3:
         block_address = coinbase
         if len(sys.argv) >= 3 and sys.argv[3] == "-register":
             print(sys.argv[2], sys.argv[3])
