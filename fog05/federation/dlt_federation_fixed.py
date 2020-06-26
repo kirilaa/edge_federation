@@ -394,8 +394,8 @@ if __name__ == '__main__':
         exit(0)
     if sys.argv[1] == 'consumer' and len(sys.argv) <= 3:
         block_address = coinbase
-        if len(sys.argv) >= 3 and sys.argv[3] == "-register":
-            print(sys.argv[2], sys.argv[3])
+        if len(sys.argv) >= 3 and sys.argv[2] == "-register":
+            print(sys.argv[1], sys.argv[2])
             domain_name = "AD1"
             try:
                 print("Registering....")
