@@ -290,17 +290,18 @@ def provider():
     provider_domain = FIMAPI(IP2)
     # a2 = FIMAPI('163.117.139.226')
     # Get the nodes from the domain 
-    nodes = a.node.list()
-    if len(nodes) == 0:
-        print('No nodes')
-        exit(-1)
-    # Print the nodes from the domain
-    print('Nodes:')
-    for n in nodes:
-        print('UUID: {}'.format(n))
+    # nodes = provider_domain.node.list()
+    # if len(nodes) == 0:
+    #     print('No nodes')
+    #     exit(-1)
+    # # Print the nodes from the domain
+    # print('Nodes:')
+    # for n in nodes:
+    #     print('UUID: {}'.format(n))
     
-    # Load the FDU (descriptors)
-    fdu_d = FDU(json.loads(read_file(fdufile)))
+    # # Load the FDU (descriptors)
+    # path_d = os.path.join(DESC_FOLDER,descs_d2[0])
+    # fdu_d = FDU(json.loads(read(path_d)))
 
     debug_txt = input("\nBegin listening?")
     service_id = ''
