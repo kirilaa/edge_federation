@@ -41,6 +41,9 @@ d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
 d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog03
 d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 
+IP1 = "163.117.139.226"
+IP2 = "163.117.139.70"
+
 def read_file(filepath):
     with open(filepath, 'r') as f:
         data = f.read()
@@ -209,7 +212,7 @@ def ServiceDeployed(service_id):
 
 def consumer(trusty):
     # Access the fog05 domain web socket
-    a = FIMAPI(ip)
+    a = FIMAPI(IP1)
     # Get the nodes from the domain 
     nodes = a.node.list()
     if len(nodes) == 0:
@@ -280,7 +283,7 @@ def consumer(trusty):
 
 def provider():
     # a = FIMAPI(ip)
-    provider_domain = FIMAPI(ip)
+    provider_domain = FIMAPI(IP2)
     # a2 = FIMAPI('163.117.139.226')
     # Get the nodes from the domain 
     nodes = a.node.list()
