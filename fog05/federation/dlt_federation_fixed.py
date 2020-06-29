@@ -255,7 +255,7 @@ def consumer(trusty):
 
 ########## FEDERATION STARTS HERE ###########################################################
     service_id = generateServiceId()
-    print("SERVICE ID to be used: {}", .format(service_id))
+    print("SERVICE ID to be used: ", service_id)
     # debug_txt = input("\nservice_id: {}", service_id)
     # service_id = debug_txt
     if trusty == 'trusty':
