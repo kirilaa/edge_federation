@@ -377,6 +377,7 @@ def provider():
         time.sleep(1)
         provider_domain.network.add_network_to_node(net_info['uuid'], d2_n1)
 
+        time.sleep(1)
         # input('press enter to onboard on provider domain')
         container_deploy(descs_d2,provider_domain)
     
