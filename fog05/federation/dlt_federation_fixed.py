@@ -373,10 +373,10 @@ def provider():
         
         provider_domain.network.add_network(net_info)
         # Add the created network to the node (n1)
-        input('press enter to network creation')
+        # input('press enter to network creation')
         provider_domain.network.add_network_to_node(net_info['uuid'], d2_n1)
 
-        input('press enter to onboard on provider domain')
+        # input('press enter to onboard on provider domain')
         container_deploy(descs_d2,provider_domain)
     
         # #  On-board the FDU
@@ -408,7 +408,8 @@ def provider():
     else:
         print("I am not a Winner")
 
-    input('Press enter to exit (cointainers and networks not terminated)')
+    # input('Press enter to exit (cointainers and networks not terminated)')
+    print('EXIT (cointainers and networks not terminated)')
 
     # provider_domain.fdu.terminate(instid)
     # provider_domain.fdu.offload(e_uuid)
