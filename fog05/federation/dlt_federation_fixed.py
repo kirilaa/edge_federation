@@ -374,6 +374,7 @@ def provider():
         provider_domain.network.add_network(net_info)
         # Add the created network to the node (n1)
         # input('press enter to network creation')
+        time.sleep(1)
         provider_domain.network.add_network_to_node(net_info['uuid'], d2_n1)
 
         # input('press enter to onboard on provider domain')
