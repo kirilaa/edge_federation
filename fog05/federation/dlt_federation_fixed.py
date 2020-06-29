@@ -245,12 +245,16 @@ def consumer(trusty):
         print('UUID: {}'.format(n))
 
     # input('Press to deploy net on consumer domain')
+    time.sleep(1)
     net_deploy(net_desc,a,d1_n1)
+    time.sleep(1)
     net_deploy(net_desc,a,d1_n2)
+    time.sleep(1)
     # input('Press to deploy containers on consumer domain')
     container_deploy(descs_d1,a)
     path_d = os.path.join(DESC_FOLDER,net_desc[0])
     net_d = json.loads(read(path_d))
+    time.sleep(1)
     net_info = get_net_info(a,net_d['uuid'])
 
 ########## FEDERATION STARTS HERE ###########################################################
