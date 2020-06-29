@@ -5,6 +5,7 @@ import json
 import sys
 import os
 import time
+from time import gmtime, strftime
 from web3 import Web3, HTTPProvider, IPCProvider
 from web3.contract import ConciseContract
 
@@ -44,6 +45,11 @@ d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 IP1 = "163.117.139.226"
 IP2 = "163.117.139.70"
 
+def generateServiceId():
+    time_string = strftime("%H%M", gmtime())
+    service_id = "service"+ time_string
+    return service_id
+
 def read_file(filepath):
     with open(filepath, 'r') as f:
         data = f.read()
@@ -73,13 +79,13 @@ def net_deploy(network_desc,api,node):
         path_d = os.path.join(DESC_FOLDER,d)
         net_d = json.loads(read(path_d))
         n_uuid = net_d.get('uuid')
-        input("Press enter to create network")
+        # input("Press enter to create network")
         net_info = get_net_info(api,net_d['uuid'])
         if net_info is None:
             api.network.add_network(net_d)
         net_info = get_net_info(api,net_d['uuid'])
         print('Net info {}'.format(net_info))
-        input('press enter to network creation')
+        # input('press enter to network creation')
         api.network.add_network_to_node(net_info['uuid'], node)
         time.sleep(1)
 
@@ -87,18 +93,18 @@ def container_deploy(descs,api):
     for d in descs:
         path_d = os.path.join(DESC_FOLDER,d)
         fdu_d = FDU(json.loads(read(path_d)))
-        input('press enter to onboard descriptor')
+        # input('press enter to onboard descriptor')
         res = api.fdu.onboard(fdu_d)
         e_uuid = res.get_uuid()
-        input('Press enter to define')
+        # input('Press enter to define')
         inst_info = api.fdu.define(e_uuid)
         print(inst_info.to_json())
         instid = inst_info.get_uuid()
-        input('Press enter to configure')
+        # input('Press enter to configure')
         api.fdu.configure(instid)
-        input('Press enter to start')
+        # input('Press enter to start')
         api.fdu.start(instid)
-        input('Press get info')
+        # input('Press get info')
         info = api.fdu.instance_info(instid)
         print(info.to_json())
 
@@ -238,18 +244,20 @@ def consumer(trusty):
     for n in nodes:
         print('UUID: {}'.format(n))
 
-    input('Press to deploy net on consumer domain')
+    # input('Press to deploy net on consumer domain')
     net_deploy(net_desc,a,d1_n1)
     net_deploy(net_desc,a,d1_n2)
-    input('Press to deploy containers on consumer domain')
+    # input('Press to deploy containers on consumer domain')
     container_deploy(descs_d1,a)
     path_d = os.path.join(DESC_FOLDER,net_desc[0])
     net_d = json.loads(read(path_d))
     net_info = get_net_info(a,net_d['uuid'])
 
 ########## FEDERATION STARTS HERE ###########################################################
-    debug_txt = input("\nUse service_id:")
-    service_id = debug_txt
+    service_id = generateServiceId()
+    print("SERVICE ID to be used: {}", .format(service_id))
+    # debug_txt = input("\nservice_id: {}", service_id)
+    # service_id = debug_txt
     if trusty == 'trusty':
         net_d["net_type"] = IP1
     print(net_d)
@@ -315,7 +323,7 @@ def provider():
     # path_d = os.path.join(DESC_FOLDER,descs_d2[0])
     # fdu_d = FDU(json.loads(read(path_d)))
 
-    debug_txt = input("\nBegin listening?")
+    # debug_txt = input("\nBegin listening?")
     service_id = ''
     print("\nSERVICE_ID:",service_id)
     debug_txt = input("\nStart listening for federation events....(ENTER)")
