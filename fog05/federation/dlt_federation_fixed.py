@@ -35,7 +35,7 @@ def measure(label):
         measurement["start"] = time.time()
     elif label == 'end':
         measurement["end"] = time.time() - measurement['start']
-        result_string = strftime("%H%M", gmtime())
+        result_string = strftime("%H%M", gmtime()) + "_"+ measurement['domain']
         result_file = result_path+"result"+ result_string +'.json'
         with open(result_file, 'w') as result_json:
             json.dump(measurement, result_json)
