@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .error {
+        color: red;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@4.8.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "layer": [{"data": {"name": "data-3d83ab6c1c7494a1a9ddc232312adf34"}, "mark": "bar", "encoding": {"color": {"type": "nominal", "field": "phases", "legend": null}, "x": {"type": "quantitative", "field": "time"}, "y": {"type": "nominal", "field": "domain", "sort": "x"}}}, {"data": {"name": "data-e27227871a3647f1b6a85861bc0139ba"}, "mark": "bar", "encoding": {"color": {"type": "nominal", "field": "phases", "legend": null}, "x": {"type": "quantitative", "field": "time"}, "y": {"type": "nominal", "field": "domain", "sort": "x"}}}], "$schema": "https://vega.github.io/schema/vega-lite/v4.8.1.json", "datasets": {"data-3d83ab6c1c7494a1a9ddc232312adf34": [{"time": 0.018808364868164062, "phases": "net_deploy_1", "domain": "consumer"}, {"time": 2.083887815475464, "phases": "net_deploy_2", "domain": "consumer"}, {"time": 3.068605899810791, "phases": "on_board_fdu_dhcp.json", "domain": "consumer"}, {"time": 1.045417308807373, "phases": "configure_fdu_dhcp.json", "domain": "consumer"}, {"time": 2.5039021968841553, "phases": "start_fdu_dhcp.json", "domain": "consumer"}, {"time": 0.9945192337036133, "phases": "info_fdu_dhcp.json", "domain": "consumer"}, {"time": 0.04226088523864746, "phases": "on_board_ap1.json", "domain": "consumer"}, {"time": 0.7585890293121338, "phases": "configure_ap1.json", "domain": "consumer"}, {"time": 1.5613796710968018, "phases": "start_ap1.json", "domain": "consumer"}, {"time": 0.14245033264160156, "phases": "info_ap1.json", "domain": "consumer"}, {"time": 1.8471715450286865, "phases": "federation_start", "domain": "consumer"}, {"time": 14.617684841156006, "phases": "bid_arrived", "domain": "consumer"}, {"time": 0.02633810043334961, "phases": "provider_chosen", "domain": "consumer"}, {"time": 10.107443571090698, "phases": "service_deployed", "domain": "consumer"}, {"time": 0.024886369705200195, "phases": "end", "domain": "consumer"}], "data-e27227871a3647f1b6a85861bc0139ba": [{"time": 2.4080276489257812e-05, "phases": "bid_placed", "domain": "provider"}, {"time": 8.097200393676758, "phases": "winner_choosen", "domain": "provider"}, {"time": 0.021900653839111328, "phases": "deployment_start", "domain": "provider"}, {"time": 0.013147830963134766, "phases": "trusty_info_get", "domain": "provider"}, {"time": 0.024296045303344727, "phases": "net_deploy", "domain": "provider"}, {"time": 0.00026226043701171875, "phases": "net_add", "domain": "provider"}, {"time": 1.0271110534667969, "phases": "container_deploy", "domain": "provider"}, {"time": 1.023423671722412, "phases": "on_board_ap2.json", "domain": "provider"}, {"time": 0.42688894271850586, "phases": "configure_ap2.json", "domain": "provider"}, {"time": 0.8988380432128906, "phases": "start_ap2.json", "domain": "provider"}, {"time": 2.2032806873321533, "phases": "info_ap2.json", "domain": "provider"}, {"time": 0.03131842613220215, "phases": "deployment_finished", "domain": "provider"}, {"time": 0.05678105354309082, "phases": "end", "domain": "provider"}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div class="error" style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>
