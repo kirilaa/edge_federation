@@ -54,7 +54,7 @@ def main(ip, fdufile, netfile):
 
 
     input('press enter to network creation')
-    a.network.add_network_to_node(net_info['uuid'], n2)
+    a.network.add_network_to_node(net_info['uuid'], n1)
 
     input('press enter to onboard descriptor')
     res = a.fdu.onboard(fdu_d)
@@ -82,7 +82,7 @@ def main(ip, fdufile, netfile):
     a.fdu.terminate(instid)
     a.fdu.offload(e_uuid)
     input("Press enter to remove network")
-    a.network.remove_network_from_node(n_uuid, n2)
+    a.network.remove_network_from_node(n_uuid, n1)
     a.network.remove_network(n_uuid)
 
     exit(0)
