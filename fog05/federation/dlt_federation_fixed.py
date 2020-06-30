@@ -26,7 +26,24 @@ eth_address = web3.eth.accounts
 block_address = ""
 service_id = ""
 
+measurement = {}
+start_measured = False
+result_path= "../../results/"
 
+def measure(label):
+    if label == 'start':
+        measurement["start"] = time.time()
+    elif label == 'end':
+        measurement["end"] = time.time() - measurement['start']
+        result_string = strftime("%H%M", gmtime())
+        result_file = result_path+"result"+ result_string +'.json'
+        with open(result_file, 'w') as result_json:
+            json.dump(measurement, result_json)
+    elif label == '':
+        measurement[int(time.time())] = time.time() - measurement['start']
+        print("Time without label registered")
+    else:
+        measurement[label] = time.time()-measurement['start']
 
 
 ####### README ######
@@ -94,16 +111,20 @@ def container_deploy(descs,api):
         path_d = os.path.join(DESC_FOLDER,d)
         fdu_d = FDU(json.loads(read(path_d)))
         # input('press enter to onboard descriptor')
+        measure('on_board_'+d)
         res = api.fdu.onboard(fdu_d)
         e_uuid = res.get_uuid()
         # input('Press enter to define')
         inst_info = api.fdu.define(e_uuid)
         print(inst_info.to_json())
         instid = inst_info.get_uuid()
+        measure('configure_'+d)
         # input('Press enter to configure')
         api.fdu.configure(instid)
+        measure('start_'+d)
         # input('Press enter to start')
         api.fdu.start(instid)
+        measure('info_'+d)
         # input('Press get info')
         info = api.fdu.instance_info(instid)
         print(info.to_json())
@@ -232,6 +253,8 @@ def ServiceDeployed(service_id):
     result = Federation_contract.functions.ServiceDeployed(info= web3.toBytes(text= "hostapd"), _id= web3.toBytes(text= service_id)).transact({'from':block_address})
 
 def consumer(trusty):
+    measurement["domain"] = 'consumer'
+    measure('start')
     # Access the fog05 domain web socket
     a = FIMAPI(IP1)
     # Get the nodes from the domain 
@@ -244,9 +267,11 @@ def consumer(trusty):
     for n in nodes:
         print('UUID: {}'.format(n))
 
+    measure('net_deploy_1')
     # input('Press to deploy net on consumer domain')
     time.sleep(1)
     net_deploy(net_desc,a,d1_n1)
+    measure('net_deploy_2')
     time.sleep(1)
     net_deploy(net_desc,a,d1_n2)
     time.sleep(1)
@@ -274,7 +299,12 @@ def consumer(trusty):
     print("\nSERVICE_ID:",service_id)
     debug_txt = input("\nCreate Service anouncement....(ENTER)")
     start = time.time()
+    measure('federation_start')
     bids_event = AnnounceService(net_info, service_id, trusty)
+    newService_event = ServiceAnnouncementEvent()
+    check_event = newService_event.get_all_entries()
+    if len(check_event) > 0:
+        measure('federation_announced')
     bidderArrived = False
     while bidderArrived == False:
         new_events = bids_event.get_all_entries()
@@ -285,15 +315,19 @@ def consumer(trusty):
             bid_index = int(event['args']['max_bid_index'])
             bidderArrived = True
             if int(bid_index) < 2:
+                measure('bid_arrived')
                 bid_info = GetBidInfo(int(bid_index-1), service_id)
                 print(bid_info)
+                measure('provider_chosen')
                 ChooseProvider(int(bid_index)-1, service_id)
                 break
     serviceDeployed = False
     while serviceDeployed == False:
         serviceDeployed = True if GetServiceState(service_id) == 2 else False
+    measure('service_deployed')
     serviceDeployedInfo = GetServiceInfo(service_id, False)
     end = time.time()
+    measure('end')
     print(serviceDeployedInfo)
     print("SERVICE FEDERATED!")
     print("Time it took:", int(end-start))
@@ -310,6 +344,7 @@ def consumer(trusty):
     exit(0)
 
 def provider():
+    measurement["domain"] = 'provider'
     # a = FIMAPI(ip)
     provider_domain = FIMAPI(IP2)
     # a2 = FIMAPI('163.117.139.226')
@@ -342,9 +377,11 @@ def provider():
             if GetServiceState(service_id) == 0:
                 open_services.append(service_id)
         if len(open_services) > 0:
+            measure('start')
             print("OPEN = ", len(open_services))
             newService = True
     service_id = open_services[-1]
+    measure('bid_placed')
     winnerChosen_event = PlaceBid(service_id)
     winnerChosen = False
     while winnerChosen == False:
@@ -352,21 +389,25 @@ def provider():
         for event in new_events:
             event_serviceid = web3.toText(event['args']['_id'])
             if event_serviceid == service_id:
+                measure('winner_choosen')
                 winnerChosen = True
                 break
     am_i_winner = CheckWinner(service_id)
     if am_i_winner == True:
+        measure('deployment_start')
         net_d = GetServiceInfo(service_id, True)
 ########## FEDERATED SERVICE DEPLOYEMENT HERE ###########################################################
         print(net_d)
         if net_d['privacy'] == "trusty": 
             print("Trusty federation")
             # a2 = FIMAPI(net_d["net_type"])
+            measure('trusty_info_get')
             consumer_domain = FIMAPI(net_d["net_type"])
             net_info = get_net_info(consumer_domain,net_d['uuid'])
             print(consumer_domain.network.list())
             print('Net info {}'.format(net_info))
         else:
+            measure('untrusty_info_get')
             print("Untrusty federation")
             net_info = net_d
             
@@ -375,12 +416,15 @@ def provider():
         # Get info if the network is created
         print(net_d['uuid'], net_d['net_type'])
         
+        measure('net_deploy')
         provider_domain.network.add_network(net_info)
         # Add the created network to the node (n1)
         # input('press enter to network creation')
+        measure('net_add')
         time.sleep(1)
         provider_domain.network.add_network_to_node(net_info['uuid'], d2_n1)
 
+        measure('container_deploy')
         time.sleep(1)
         # input('press enter to onboard on provider domain')
         container_deploy(descs_d2,provider_domain)
@@ -410,10 +454,11 @@ def provider():
         # print(info.to_json())
 
 ######################### UNTIL HERE ####################################################################
+        measure('deployment_finished')
         ServiceDeployed(service_id)
     else:
         print("I am not a Winner")
-
+    measure('end')
     # input('Press enter to exit (cointainers and networks not terminated)')
     print('EXIT (cointainers and networks not terminated)')
 
