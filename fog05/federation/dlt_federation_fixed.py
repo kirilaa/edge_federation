@@ -1,5 +1,6 @@
 from fog05 import FIMAPI
 from fog05_sdk.interfaces.FDU import FDU
+import paho.mqtt.client as mqtt
 import uuid
 import json
 import sys
@@ -25,6 +26,41 @@ coinbase = web3.eth.coinbase
 eth_address = web3.eth.accounts
 block_address = ""
 service_id = ""
+
+################### MQTT ###################################
+
+MQTT_IP="192.168.122.3"
+MQTT_PORT=1883
+MQTT_TOPIC="/federation"
+
+mqtt_federation_trigger = False
+mqtt_federation_usage = False
+def on_connect(client, userdata, flags, rc):
+
+    # Subscribing in on_connect() means that if we lose the connection and
+    # reconnect then subscriptions will be renewed.
+    client.subscribe(MQTT_TOPIC)
+
+def on_message(client, userdata, msg):
+    print('received message: \n%s over topic: %s' % (msg,
+        ROS_CORE_ALLOC_TOPIC))
+    print('received message %s' % str(msg.payload))
+
+    # Check for byte encoding just in case
+    if type(msg.payload) == bytes:
+        message = json.loads(msg.payload.decode("UTF-8"))
+    else:
+        message = json.loads(msg.payload)
+
+    if message["action"]== 'federate':
+        mqtt_federation_trigger = True
+    else:
+        mqtt_federation_trigger = False
+
+
+   
+
+#___________________________________________________________
 
 measurement = {}
 start_measured = False
@@ -253,6 +289,8 @@ def ServiceDeployed(service_id):
     result = Federation_contract.functions.ServiceDeployed(info= web3.toBytes(text= "hostapd"), _id= web3.toBytes(text= service_id)).transact({'from':block_address})
 
 def consumer(trusty):
+    mqtt_federation_trigger = False
+    #Configure measurements
     measurement["domain"] = 'consumer'
     measure('start')
     # Access the fog05 domain web socket
@@ -282,22 +320,28 @@ def consumer(trusty):
     time.sleep(1)
     net_info = get_net_info(a,net_d['uuid'])
 
+
 ########## FEDERATION STARTS HERE ###########################################################
     service_id = generateServiceId()
     print("SERVICE ID to be used: ", service_id)
-    # debug_txt = input("\nservice_id: {}", service_id)
-    # service_id = debug_txt
     if trusty == 'trusty':
         net_info["net_type"] = IP1
     print(net_info)
-    # net_d = {"uuid": "6cc2aa30-1dcf-4c93-a57e-433fd0bd498e",\
-    #         "name": "net1",\
-    #         "net_type": "ELAN",\
-    #         "is_mgmt": False
-    #         }
-
-    print("\nSERVICE_ID:",service_id)
-    debug_txt = input("\nCreate Service anouncement....(ENTER)")
+    if mqtt_federation_usage:
+        #Configure Mqtt
+        client = mqtt.Client(None, clean_session=True)
+        client.on_connect = on_connect
+        client.on_message = on_message
+        client.on_log = on_log
+        client.connect(MQTT_IP, MQTT_PORT, 60)
+        client.loop_start()
+        print("Waiting for Federation request via MQTT\n")
+        while mqtt_federation_trigger == False:
+            print(".")
+        client.loop_stop()
+    else: 
+        print("\nSERVICE_ID:",service_id)
+        debug_txt = input("\nCreate Service anouncement....(ENTER)")
     start = time.time()
     measure('federation_start')
     bids_event = AnnounceService(net_info, service_id, trusty)
@@ -473,7 +517,9 @@ if __name__ == '__main__':
         print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty> -register(optional)'.format(
             sys.argv[0]))
         exit(0)
-    
+    if len(sys.agrv) == 4:
+        if sys.argv[3] == 'mqtt':
+            mqtt_federation_usage = True
     if sys.argv[1] == 'consumer':
         block_address = coinbase
         domain_name = "AD1"
