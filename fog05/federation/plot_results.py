@@ -9,21 +9,6 @@ import os
 results_path= "../../results/"
 file_type = ".html"
 
-def plot_data(data):
-    data_values = data.values()
-    data_values = list(data_values)
-    data_values = data_values[2:]
-    
-    data_keys = data.keys()
-    data_keys = list(data_keys)
-    data_keys = data_keys[2:]
-
-    plot_data = pd.DataFrame({'time':data_values, 'phases':data_keys})
-
-    plot = alt.Chart(plot_data).mark_bar().encode( x= 'time', y= alt.Y('phases',sort='x'), color='phases')
-
-    return plot
-
 def reduce_data(data):
     data = list(data)
     data = data[2:]
@@ -38,6 +23,33 @@ def reverse_data(data):
             data_reversed[i]=data[i]
     return data_reversed
 
+def generateProcedureLabels(data, domain, field):
+    fed_label = [str("federation procedure")]*len(data)
+    if domain == 'consumer':
+        fed_label[:data.index(field)] = [str("deployment procedure")]*len(data[:data.index(field)])
+        return fed_label
+    elif domain == 'provider':
+        fed_label[data.index(field):] = [str("deployment procedure")]*len(data[data.index(field):])
+        return fed_label
+    else:
+        return data
+    
+
+def plot_data(data):
+    data_values = reduce_data(data.values())
+    data_keys = reduce_data(data.keys())
+    
+    field = "federation_start" if data["domain"] == 'consumer' else "trusty_info_get"
+    procedure = generateProcedureLabels(data_keys, data["domain"], field)
+
+    print(field, data["domain"], procedure)
+    plot_data = pd.DataFrame({'time':data_values, 'phases':data_keys, 'procedure':procedure})
+
+    plot = alt.Chart(plot_data).mark_bar().encode( x= 'time', y= alt.Y('phases',sort='x'), color='procedure')
+    # plot = alt.Chart(plot_data).mark_line(point=True).encode( x= 'time', y= alt.Y('phases',sort='x'), color='phases')
+
+    return plot
+
 
 def combine_plots(consumer_data, provider_data):
     consumer_values = reduce_data(consumer_data.values())
@@ -51,16 +63,23 @@ def combine_plots(consumer_data, provider_data):
     consumer_label = ['consumer']*len(consumer_keys)
     provider_label = ['provider']*len(provider_keys)
 
-    c_plot_data = pd.DataFrame({'time':consumer_values, 'phases':consumer_keys, 'domain':consumer_label})
-    p_plot_data = pd.DataFrame({'time':provider_values, 'phases':provider_keys, 'domain':provider_label})
+    c_fed_label = [str("federation procedure")]*len(consumer_keys)
+    c_fed_label[:consumer_keys.index("federation_start")] = [str("deployment procedure")]*len(consumer_keys[:consumer_keys.index("federation_start")])
+    
+    p_fed_label = [str("federation procedure")]*len(provider_keys)
+    p_fed_label[provider_keys.index("trusty_info_get"):] = [str("deployment procedure")]*len(provider_keys[provider_keys.index("trusty_info_get"):])
+  
+
+    c_plot_data = pd.DataFrame({'time':consumer_values, 'phases':consumer_keys, 'domain':consumer_label, 'procedure':c_fed_label})
+    p_plot_data = pd.DataFrame({'time':provider_values, 'phases':provider_keys, 'domain':provider_label, 'procedure':p_fed_label})
 
     # c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color='phases')
     # p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color='phases')
-    c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('phases', legend= None))
-    p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('phases', legend= None))
+    # c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= None))
+    # p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= None))
     
-    # c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('phases', legend= alt.Legend(orient="bottom")))
-    # p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('phases', legend= alt.Legend(orient="bottom")))
+    c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= alt.Legend(orient="bottom")))
+    p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= alt.Legend(orient="bottom")))
     
     plot = c_plot + p_plot
 

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .error {
+        color: red;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@4.8.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-49d6e3eaa438bcf7fa5dd148d8a24d3f"}, "mark": "bar", "encoding": {"color": {"type": "nominal", "field": "procedure"}, "x": {"type": "quantitative", "field": "time"}, "y": {"type": "nominal", "field": "phases", "sort": "x"}}, "$schema": "https://vega.github.io/schema/vega-lite/v4.8.1.json", "datasets": {"data-49d6e3eaa438bcf7fa5dd148d8a24d3f": [{"time": 5.125999450683594e-05, "phases": "bid_placed", "procedure": "federation procedure"}, {"time": 4.916848421096802, "phases": "winner_choosen", "procedure": "federation procedure"}, {"time": 4.963439226150513, "phases": "deployment_start", "procedure": "federation procedure"}, {"time": 4.988696813583374, "phases": "trusty_info_get", "procedure": "deployment procedure"}, {"time": 5.01073431968689, "phases": "net_deploy", "procedure": "deployment procedure"}, {"time": 5.010995626449585, "phases": "net_add", "procedure": "deployment procedure"}, {"time": 6.036077499389648, "phases": "container_deploy", "procedure": "deployment procedure"}, {"time": 7.060241937637329, "phases": "on_board_ap2.json", "procedure": "deployment procedure"}, {"time": 7.445973873138428, "phases": "configure_ap2.json", "procedure": "deployment procedure"}, {"time": 8.350818872451782, "phases": "start_ap2.json", "procedure": "deployment procedure"}, {"time": 10.492100477218628, "phases": "info_ap2.json", "procedure": "deployment procedure"}, {"time": 10.520679473876953, "phases": "deployment_finished", "procedure": "deployment procedure"}, {"time": 10.594696998596191, "phases": "end", "procedure": "deployment procedure"}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div class="error" style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>
