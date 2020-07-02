@@ -62,25 +62,25 @@ def on_message(client, userdata, msg):
             robot_connected = False
         
     # Check for byte encoding just in case
-    if type(msg.payload) == bytes:
-        message = json.loads(msg.payload.decode("UTF-8"))
-    else:
-        message = json.loads(msg.payload)
-    print(message)
-    print("x:",float(message["center"][0]),"y",float(message["center"][1]))
-    x = float(message["center"][0])
-    y = float(message["center"][1])
-    distance = compute_distance(x, y)
-    print("Distance: ",distance)
+    # if type(msg.payload) == bytes:
+    #     message = json.loads(msg.payload.decode("UTF-8"))
+    # else:
+    #     message = json.loads(msg.payload)
+    # print(message)
+    # print("x:",float(message["center"][0]),"y",float(message["center"][1]))
+    # x = float(message["center"][0])
+    # y = float(message["center"][1])
+    # distance = compute_distance(x, y)
+    # print("Distance: ",distance)
 
-    # print(message['center'])
-    # if len(message["center"]):
-    #     distance = compute_distance(float(message["center"][0]), float(message["center"][1]))
+    # # print(message['center'])
+    # # if len(message["center"]):
+    # #     distance = compute_distance(float(message["center"][0]), float(message["center"][1]))
 
-    if distance < 2.0:
-        print("IN: Distance lower than 2")
-    else:
-        print("OUT")
+    # if distance < 2.0:
+    #     print("IN: Distance lower than 2")
+    # else:
+    #     print("OUT")
 
     #MQTT_MSG=json.dumps({"center": [x1,y1],"radius":  3});
     #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
