@@ -9,6 +9,9 @@ import os
 results_path= "../../results/"
 file_type = ".html"
 
+consumer_start = "request_federation"
+provider_start = "trusty_info_get"
+
 def reduce_data(data):
     data = list(data)
     data = data[2:]
@@ -39,7 +42,7 @@ def plot_data(data):
     data_values = reduce_data(data.values())
     data_keys = reduce_data(data.keys())
     
-    field = "federation_start" if data["domain"] == 'consumer' else "trusty_info_get"
+    field = "request_federation" if data["domain"] == 'consumer' else provider_start
     procedure = generateProcedureLabels(data_keys, data["domain"], field)
 
     print(field, data["domain"], procedure)
@@ -64,10 +67,10 @@ def combine_plots(consumer_data, provider_data):
     provider_label = ['provider']*len(provider_keys)
 
     c_fed_label = [str("federation procedure")]*len(consumer_keys)
-    c_fed_label[:consumer_keys.index("federation_start")] = [str("deployment procedure")]*len(consumer_keys[:consumer_keys.index("federation_start")])
+    c_fed_label[:consumer_keys.index("request_federation")] = [str("deployment procedure")]*len(consumer_keys[:consumer_keys.index(consumer_start)])
     
     p_fed_label = [str("federation procedure")]*len(provider_keys)
-    p_fed_label[provider_keys.index("trusty_info_get"):] = [str("deployment procedure")]*len(provider_keys[provider_keys.index("trusty_info_get"):])
+    p_fed_label[provider_keys.index(provider_start):] = [str("deployment procedure")]*len(provider_keys[provider_keys.index(provider_start):])
   
 
     c_plot_data = pd.DataFrame({'time':consumer_values, 'phases':consumer_keys, 'domain':consumer_label, 'procedure':c_fed_label})

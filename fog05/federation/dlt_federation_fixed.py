@@ -97,6 +97,7 @@ start_measured = False
 result_path= "../../results/"
 
 def measure(label):
+    global measurement
     if label == 'start':
         measurement["start"] = time.time()
     elif label == 'end':
@@ -341,6 +342,7 @@ def ServiceDeployed(service_id):
 def consumer(trusty):
     global mqtt_federation_trigger
     global robot_connected
+    global measurement
     #Configure measurements
     measurement["domain"] = 'consumer'
     # measure('start')
@@ -442,8 +444,12 @@ def consumer(trusty):
         measure('robot_connected')
         client.loop_stop()
         print("Robot has connected!") 
-    measure('end')
-    input('Press enter to exit (cointainers and networks not terminated)')
+        measure('end')
+        exit(0)
+    else:
+        measure('end')
+        input('Press enter to exit (cointainers and networks not terminated)')
+        exit(0)
     # input('Press enter to terminate')
     # a.fdu.terminate(instid)
     # a.fdu.offload(e_uuid)
@@ -451,9 +457,9 @@ def consumer(trusty):
     # a.network.remove_network_from_node(n_uuid, n1)
     # a.network.remove_network(n_uuid)
     
-    exit(0)
 
 def provider():
+    global measurement
     measurement["domain"] = 'provider'
     # a = FIMAPI(ip)
     provider_domain = FIMAPI(IP2)
