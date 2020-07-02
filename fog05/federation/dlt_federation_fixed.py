@@ -56,6 +56,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     global entered_in_the_close_range
     global mqtt_federation_trigger
+    global start_federation_distance
     print('received message: \n%s over topic: %s' % (msg,
         MQTT_TOPIC))
     print('received message %s' % str(msg.payload))
