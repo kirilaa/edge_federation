@@ -391,6 +391,7 @@ def consumer(trusty):
         while mqtt_federation_trigger == False:
             # print(".")
             time.time()
+        print("continued")
         client.loop_stop()
     else: 
         print("\nSERVICE_ID:",service_id)
