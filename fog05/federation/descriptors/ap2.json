@@ -9,7 +9,7 @@
         "storage_size_gb": 5.0
     },
     "image": {
-        "uri": "file:///home/netcom/repository/hostapd03.tar.gz",
+        "uri": "file:///home/netcom/repository/vAP_provider.tar.gz",
         "checksum": "26eda4b4bae4dad871ec9fab9c51af3d3517e8db5256af1d1bbc743a4ff4d8ac",
         "format": "tar.gz"
     },
