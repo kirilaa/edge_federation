@@ -68,9 +68,6 @@ def on_message(client, userdata, msg):
     else:
         mqtt_federation_trigger = False
 
-
-   
-
 #___________________________________________________________
 
 measurement = {}
@@ -278,8 +275,8 @@ def PlaceBid(service_id):
     service_price = 5
     Federation_contract.functions.PlaceBid(_id= web3.toBytes(text= service_id), _price= service_price,\
     endpoint_uuid_1= web3.toBytes(text = "hostapd"), \
-    endpoint_uuid_2= web3.toBytes(text = "already"),\
-    endpoint_name= web3.toBytes(text = "instansiated"),\
+    endpoint_uuid_2= web3.toBytes(text = "ready"),\
+    endpoint_name= web3.toBytes(text = "04:f0:21:4f:fe:0a"),\
     endpoint_net_type= web3.toBytes(text = "running"),\
     endpoint_is_mgmt= False).transact({'from':block_address})
     block = web3.eth.getBlock('latest')
@@ -387,7 +384,8 @@ def consumer(trusty):
     print("SERVICE FEDERATED!")
     print("Time it took:", int(end-start))
 ########## FEDERATION FINISH HERE ###########################################################
-
+    MQTT_MSG=json.dumps({"mac": serviceDeployedInfo["name"]});
+    client.publish("/experiment/allocation",MQTT_MSG)
     input('Press enter to exit (cointainers and networks not terminated)')
     # input('Press enter to terminate')
     # a.fdu.terminate(instid)
