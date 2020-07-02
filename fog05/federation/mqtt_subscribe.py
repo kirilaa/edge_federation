@@ -11,6 +11,11 @@ MQTT_TOPIC="/experiment/location"
 
 mqtt_federation_trigger = False
 mqtt_federation_usage = False
+
+def compute_distance(x,y):
+    distance = (x-coordinates["x"])*(x-coordinates["x"]) + (y-coordinates["y"])*(y-coordinates["y"])
+    return math.sqrt(distance)
+
 def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
@@ -18,7 +23,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(MQTT_TOPIC)
 
 def on_message(client, userdata, msg):
-
+    print(msg)
     # Check for byte encoding just in case
     if type(msg.payload) == bytes:
         message = json.loads(msg.payload.decode("UTF-8"))
