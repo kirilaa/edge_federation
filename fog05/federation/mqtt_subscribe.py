@@ -25,6 +25,8 @@ def on_message(client, userdata, msg):
     else:
         message = json.loads(msg.payload)
     print(message)
+
+    print(message['center'])
     if len(message["center"]):
         distance = compute_distance(message["center"][0], message["center"][1])
     
