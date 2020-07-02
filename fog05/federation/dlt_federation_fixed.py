@@ -81,9 +81,12 @@ def on_message(client, userdata, msg):
             mqtt_federation_trigger = False
     
     if "connected" in message:
+        print("Robot connection message")
         if message["connected"] == True:
+            print("Robot connected True")
             robot_connected = True
         else:
+            print("Robot connected False")
             robot_connected = False
 
 #___________________________________________________________
@@ -432,7 +435,7 @@ def consumer(trusty):
         client.loop_start()
         print("Robot connecting to the new AP.....")
         while robot_connected == False:
-            print(".")
+            time.time()
         measure('robot_connected')
         client.loop_stop()
         print("Robot has connected!") 
