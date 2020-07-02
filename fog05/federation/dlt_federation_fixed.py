@@ -384,8 +384,9 @@ def consumer(trusty):
     print("SERVICE FEDERATED!")
     print("Time it took:", int(end-start))
 ########## FEDERATION FINISH HERE ###########################################################
-    MQTT_MSG=json.dumps({"mac": serviceDeployedInfo["name"]});
-    client.publish("/experiment/allocation",MQTT_MSG)
+    if mqtt_federation_usage:
+        MQTT_MSG=json.dumps({"mac": serviceDeployedInfo["name"]})
+        client.publish("/experiment/allocation",MQTT_MSG)
     input('Press enter to exit (cointainers and networks not terminated)')
     # input('Press enter to terminate')
     # a.fdu.terminate(instid)
