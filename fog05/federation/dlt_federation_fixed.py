@@ -383,7 +383,7 @@ def consumer(trusty):
         client.loop_start()
         print("Waiting for Federation request via MQTT\n")
         while mqtt_federation_trigger == False:
-            print(".")
+            # print(".")
         client.loop_stop()
     else: 
         print("\nSERVICE_ID:",service_id)
