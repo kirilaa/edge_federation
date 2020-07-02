@@ -10,13 +10,16 @@ MQTT_IP="192.168.122.3"
 MQTT_PORT=1883
 MQTT_TOPIC="/experiment/location"
 
-mqtt_federation_trigger = False
-mqtt_federation_usage = False
-
 coordinates = {"x": 30.4075826699, "y": -7.67201633367}
 ap_x = float(30.4075826699)
 ap_y = float(-7.67201633367)
 
+robot_connected = False
+mqtt_federation_trigger = False
+mqtt_federation_usage = False
+entered_in_the_close_range = False
+
+start_federation_distance = 3.0
 
 def compute_distance(x,y):
     distance = float((x-ap_x)*(x-ap_x) + (y-ap_y)*(y-ap_y))
@@ -30,9 +33,30 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(MQTT_TOPIC)
 
 def on_message(client, userdata, msg):
-    print(msg)
+    print(msg.payload)
+    message = msg.payload
+    if "center" in message and len(message["center"])>0:
+        distance = compute_distance(float(message["center"][0]), float(message["center"][1]))
+        print("Distance:", distance)
+        #MQTT_MSG=json.dumps({"center": [x1,y1],"radius":  3});
+        #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
+        if distance < 1.0:
+            entered_in_the_close_range = True
+            print("entered in range: True")
+        elif entered_in_the_close_range and distance > start_federation_distance:
+            mqtt_federation_trigger = True
+            print("Triggered Federation!")
+        else:
+            mqtt_federation_trigger = False
     
-
+    if "connected" in message:
+        if message["connected"] == True:
+            print("Robot connected")
+            robot_connected = True
+        else:
+            print("Robot not connected")
+            robot_connected = False
+        
     # Check for byte encoding just in case
     if type(msg.payload) == bytes:
         message = json.loads(msg.payload.decode("UTF-8"))

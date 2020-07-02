@@ -28,19 +28,25 @@ eth_address = web3.eth.accounts
 block_address = ""
 service_id = ""
 
-coordinates = {"x": 30.4075826699, "y": -7.67201633367}
-
 ################### MQTT ###################################
+
+ap_x = float(30.4075826699)
+ap_y = float(-7.67201633367)
+
 def compute_distance(x,y):
-    distance = (x-coordinates["x"])*(x-coordinates["x"]) + (y-coordinates["y"])*(y-coordinates["y"])
+    distance = float((x-ap_x)*(x-ap_x) + (y-ap_y)*(y-ap_y))
     return math.sqrt(distance)
 
 MQTT_IP="192.168.122.3"
 MQTT_PORT=1883
 MQTT_TOPIC="/experiment/location"
-
+robot_connected = False
 mqtt_federation_trigger = False
 mqtt_federation_usage = False
+entered_in_the_close_range = False
+
+start_federation_distance = 3.0
+
 def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
@@ -52,21 +58,30 @@ def on_message(client, userdata, msg):
         MQTT_TOPIC))
     print('received message %s' % str(msg.payload))
 
+
     # Check for byte encoding just in case
     if type(msg.payload) == bytes:
         message = json.loads(msg.payload.decode("UTF-8"))
     else:
         message = json.loads(msg.payload)
 
-    if len(message["center"]):
-        distance = compute_distance(message["center"][0], message["center"][1])
+    if "center" in message and len(message["center"])>0:
+        distance = compute_distance(float(message["center"][0]), float(message["center"][1]))
         
-    #MQTT_MSG=json.dumps({"center": [x1,y1],"radius":  3});
-    #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
-    if distance < 2.0:
-        mqtt_federation_trigger = True
-    else:
-        mqtt_federation_trigger = False
+        #MQTT_MSG=json.dumps({"center": [x1,y1],"radius":  3});
+        #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
+        if distance < 1.0:
+            entered_in_the_close_range = True
+        elif entered_in_the_close_range and distance > start_federation_distance:
+            mqtt_federation_trigger = True
+        else:
+            mqtt_federation_trigger = False
+    
+    if "connected" in message:
+        if message["connected"] == True:
+            robot_connected = True
+        else:
+            robot_connected = False
 
 #___________________________________________________________
 
@@ -320,7 +335,7 @@ def consumer(trusty):
     mqtt_federation_trigger = False
     #Configure measurements
     measurement["domain"] = 'consumer'
-    measure('start')
+    # measure('start')
     # Access the fog05 domain web socket
     a = FIMAPI(IP1)
     # Get the nodes from the domain 
@@ -347,6 +362,7 @@ def consumer(trusty):
     net_d = json.loads(read(path_d))
     time.sleep(1)
     net_info = get_net_info(a,net_d['uuid'])
+    # measure('collect_net_info')
     # restartBrainMachine()
     # measure("brain_start")
 
@@ -366,13 +382,14 @@ def consumer(trusty):
         print("Waiting for Federation request via MQTT\n")
         while mqtt_federation_trigger == False:
             print(".")
+            measure('start')
         client.loop_stop()
     else: 
         print("\nSERVICE_ID:",service_id)
         debug_txt = input("\nCreate Service anouncement....(ENTER)")
     start = time.time()
-    measure('federation_start')
     bids_event = AnnounceService(net_info, service_id, trusty)
+    measure('request_federation')
     newService_event = ServiceAnnouncementEvent()
     check_event = newService_event.get_all_entries()
     if len(check_event) > 0:
@@ -387,19 +404,18 @@ def consumer(trusty):
             bid_index = int(event['args']['max_bid_index'])
             bidderArrived = True
             if int(bid_index) < 2:
-                measure('bid_arrived')
+                measure('choosing_provider')
                 bid_info = GetBidInfo(int(bid_index-1), service_id)
                 print(bid_info)
-                measure('provider_chosen')
                 ChooseProvider(int(bid_index)-1, service_id)
+                measure('provider_deploys')
                 break
     serviceDeployed = False
     while serviceDeployed == False:
         serviceDeployed = True if GetServiceState(service_id) == 2 else False
-    measure('service_deployed')
+    measure('federation_completed')
     serviceDeployedInfo = GetServiceInfo(service_id, False)
     end = time.time()
-    measure('end')
     print(serviceDeployedInfo)
     print("SERVICE FEDERATED!")
     print("Time it took:", int(end-start))
@@ -407,6 +423,15 @@ def consumer(trusty):
     if mqtt_federation_usage:
         MQTT_MSG=json.dumps({"mac": serviceDeployedInfo["name"]})
         client.publish("/experiment/allocation",MQTT_MSG)
+        client.subscribe("/robot/connection")
+        client.loop_start()
+        print("Robot connecting to the new AP.....")
+        while robot_connected == False:
+            print(.)
+        measure('robot_connected')
+        client.loop_stop()
+        print("Robot has connected!") 
+    measure('end')
     input('Press enter to exit (cointainers and networks not terminated)')
     # input('Press enter to terminate')
     # a.fdu.terminate(instid)
