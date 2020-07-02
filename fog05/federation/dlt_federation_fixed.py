@@ -6,6 +6,7 @@ import json
 import sys
 import os
 import time
+import math
 from time import gmtime, strftime
 from web3 import Web3, HTTPProvider, IPCProvider
 from web3.contract import ConciseContract
@@ -27,7 +28,12 @@ eth_address = web3.eth.accounts
 block_address = ""
 service_id = ""
 
+coordinates = {"x": 30.4075826699, "y": -7.67201633367}
+
 ################### MQTT ###################################
+def compute_distance(x,y):
+    distance = (x-coordinates["x"])*(x-coordinates["x"]) + (y-coordinates["y"])*(y-coordinates["y"])
+    return math.sqrt(distance)
 
 MQTT_IP="192.168.122.3"
 MQTT_PORT=1883
@@ -51,6 +57,8 @@ def on_message(client, userdata, msg):
         message = json.loads(msg.payload.decode("UTF-8"))
     else:
         message = json.loads(msg.payload)
+
+        
     #MQTT_MSG=json.dumps({"center": [x1,y1],"radius":  3});
     #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
     if message["action"]== 'federate':
@@ -518,7 +526,7 @@ if __name__ == '__main__':
         print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty> -register(optional)'.format(
             sys.argv[0]))
         exit(0)
-    if len(sys.agrv) == 4:
+    if len(sys.argv) == 4:
         if sys.argv[3] == 'mqtt':
             mqtt_federation_usage = True
     if sys.argv[1] == 'consumer':
