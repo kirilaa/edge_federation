@@ -63,7 +63,7 @@ def on_message(client, userdata, msg):
         
     #MQTT_MSG=json.dumps({"center": [x1,y1],"radius":  3});
     #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
-    if distance > 3:
+    if distance < 2.0:
         mqtt_federation_trigger = True
     else:
         mqtt_federation_trigger = False
