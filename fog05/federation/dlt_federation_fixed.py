@@ -45,7 +45,7 @@ mqtt_federation_trigger = False
 mqtt_federation_usage = False
 entered_in_the_close_range = False
 
-start_federation_distance = 3.0
+start_federation_distance = float(3.0)
 
 def on_connect(client, userdata, flags, rc):
 
@@ -54,6 +54,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(MQTT_TOPIC)
 
 def on_message(client, userdata, msg):
+    global entered_in_the_close_range
     print('received message: \n%s over topic: %s' % (msg,
         MQTT_TOPIC))
     print('received message %s' % str(msg.payload))
@@ -72,7 +73,7 @@ def on_message(client, userdata, msg):
         #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
         if distance < 1.0:
             entered_in_the_close_range = True
-        elif entered_in_the_close_range and distance > start_federation_distance:
+        elif entered_in_the_close_range == True and distance > start_federation_distance:
             mqtt_federation_trigger = True
         else:
             mqtt_federation_trigger = False
