@@ -31,7 +31,7 @@ service_id = ""
 
 MQTT_IP="192.168.122.3"
 MQTT_PORT=1883
-MQTT_TOPIC="/experiments/location"
+MQTT_TOPIC="/experiment/location"
 
 mqtt_federation_trigger = False
 mqtt_federation_usage = False
@@ -51,7 +51,8 @@ def on_message(client, userdata, msg):
         message = json.loads(msg.payload.decode("UTF-8"))
     else:
         message = json.loads(msg.payload)
-
+    #MQTT_MSG=json.dumps({"center": [x1,y1],"radius":  3});
+    #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
     if message["action"]== 'federate':
         mqtt_federation_trigger = True
     else:
