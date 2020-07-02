@@ -19,7 +19,7 @@ mqtt_federation_trigger = False
 mqtt_federation_usage = False
 entered_in_the_close_range = False
 
-start_federation_distance = 3.0
+start_federation_distance = float(3.0)
 
 def compute_distance(x,y):
     distance = float((x-ap_x)*(x-ap_x) + (y-ap_y)*(y-ap_y))
