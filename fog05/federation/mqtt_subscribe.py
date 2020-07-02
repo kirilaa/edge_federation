@@ -60,7 +60,7 @@ def on_message(client, userdata, msg):
     #     mqtt_federation_trigger = True
     # else:
     #     mqtt_federation_trigger = False
-
+if __name__ == '__main__':
     client = mqtt.Client(None, clean_session=True)
     client.on_connect = on_connect
     client.on_message = on_message
