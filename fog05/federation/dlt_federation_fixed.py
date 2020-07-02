@@ -55,6 +55,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     global entered_in_the_close_range
+    global mqtt_federation_trigger
     print('received message: \n%s over topic: %s' % (msg,
         MQTT_TOPIC))
     print('received message %s' % str(msg.payload))
@@ -71,10 +72,10 @@ def on_message(client, userdata, msg):
         
         #MQTT_MSG=json.dumps({"center": [x1,y1],"radius":  3});
         #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
-        if distance < 1.0:
-            entered_in_the_close_range = True
-        elif entered_in_the_close_range == True and distance > start_federation_distance:
+        if distance < float(4.5):
+            # entered_in_the_close_range = True
             mqtt_federation_trigger = True
+        # elif entered_in_the_close_range == True and distance > start_federation_distance:
         else:
             mqtt_federation_trigger = False
     
@@ -384,6 +385,7 @@ def consumer(trusty):
         print("Waiting for Federation request via MQTT\n")
         while mqtt_federation_trigger == False:
             # print(".")
+            time.time()
         client.loop_stop()
     else: 
         print("\nSERVICE_ID:",service_id)
