@@ -424,6 +424,7 @@ def consumer(trusty):
     if mqtt_federation_usage:
         MQTT_MSG=json.dumps({"mac": serviceDeployedInfo["name"]})
         client.publish("/experiment/allocation",MQTT_MSG)
+        measure('robot_migration')
         client.subscribe("/robot/connection")
         client.loop_start()
         print("Robot connecting to the new AP.....")
