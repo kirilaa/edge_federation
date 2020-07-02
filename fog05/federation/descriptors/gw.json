@@ -1,0 +1,42 @@
+{
+    "id": "gw_fdu",
+    "name": "gateway",
+    "computation_requirements": {
+        "cpu_arch": "x86_64",
+        "cpu_min_freq": 0,
+        "cpu_min_count": 1,
+        "ram_size_mb": 128.0,
+        "storage_size_gb": 5.0
+    },
+    "image": {
+        "uri": "file:///home/netcom/repository/gateway1.tar.gz",
+        "checksum": "ad2a1bf8602e80e15bba7ad72da88fc449c3a1bb21ab3fd8999de58e0374ae79",
+        "format": "tar.gz"
+    },
+    "storage": [],
+    "hypervisor": "LXD",
+    "migration_kind": "COLD",
+    "interfaces": [
+        {
+            "name": "mgmt",
+            "is_mgmt": false,
+            "if_type": "INTERNAL",
+            "mac_address": "be:ef:be:ef:00:01",
+            "virtual_interface": {
+                "intf_type": "VIRTIO",
+                "vpci": "0:0:0",
+                "bandwidth": 10
+            },
+            "cp_id": "gw-cp1"
+        }
+    ],
+    "io_ports": [],
+    "connection_points": [
+        {
+            "id": "gw-cp1",
+            "name": "gw_internal_cp1",
+            "vld_ref": "6cc2aa30-1dcf-4c93-a57e-433fd0bd498e"
+        }
+    ],
+    "depends_on": []
+}
