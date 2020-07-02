@@ -346,7 +346,7 @@ def consumer(trusty):
     global measurement
     #Configure measurements
     measurement["domain"] = 'consumer'
-    # measure('start')
+    measure('start')
     # Access the fog05 domain web socket
     a = FIMAPI(IP1)
     # Get the nodes from the domain 
