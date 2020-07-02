@@ -340,6 +340,7 @@ def ServiceDeployed(service_id):
 
 def consumer(trusty):
     global mqtt_federation_trigger
+    global robot_connected
     #Configure measurements
     measurement["domain"] = 'consumer'
     # measure('start')
