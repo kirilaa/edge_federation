@@ -31,7 +31,7 @@ service_id = ""
 
 MQTT_IP="192.168.122.3"
 MQTT_PORT=1883
-MQTT_TOPIC="/federation"
+MQTT_TOPIC="/experiments/location"
 
 mqtt_federation_trigger = False
 mqtt_federation_usage = False
@@ -43,7 +43,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     print('received message: \n%s over topic: %s' % (msg,
-        ROS_CORE_ALLOC_TOPIC))
+        MQTT_TOPIC))
     print('received message %s' % str(msg.payload))
 
     # Check for byte encoding just in case
