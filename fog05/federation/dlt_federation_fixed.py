@@ -106,6 +106,26 @@ d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 IP1 = "163.117.139.226"
 IP2 = "163.117.139.70"
 
+def restartBrainMachine():
+    stream = os.popen('virsh list')
+    virsh_list = stream.read()
+    virsh_list = virsh_list.split("brain_kiril")
+    if len(virsh_list) == 2 and "running" in virsh_list[1]:
+        stream = os.popen('virsh shutdown brain_kiril')
+        print("Brain is shutting down")
+        shutdown = False
+        while shutdown == False:
+            stream = os.popen('virsh list')
+            virsh_list = stream.read()
+            virsh_list = virsh_list.split("brain_kiril")
+            if len(virsh_list) == 1:
+                shutdown = True
+        stream = os.popen('virsh start brain_kiril')
+        virsh_started = stream.read()
+        print("Brain has started")
+        
+    
+
 def generateServiceId():
     time_string = strftime("%H%M", gmtime())
     service_id = "service"+ time_string
@@ -327,7 +347,8 @@ def consumer(trusty):
     net_d = json.loads(read(path_d))
     time.sleep(1)
     net_info = get_net_info(a,net_d['uuid'])
-
+    restartBrainMachine()
+    measure("brain_start")
 
 ########## FEDERATION STARTS HERE ###########################################################
     service_id = generateServiceId()
