@@ -361,7 +361,6 @@ def consumer(trusty):
         client = mqtt.Client(None, clean_session=True)
         client.on_connect = on_connect
         client.on_message = on_message
-        client.on_log = on_log
         client.connect(MQTT_IP, MQTT_PORT, 60)
         client.loop_start()
         print("Waiting for Federation request via MQTT\n")

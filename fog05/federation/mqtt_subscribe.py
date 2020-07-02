@@ -18,9 +18,6 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(MQTT_TOPIC)
 
 def on_message(client, userdata, msg):
-    print('received message: \n%s over topic: %s' % (msg,
-        MQTT_TOPIC))
-    print('received message %s' % str(msg.payload))
 
     # Check for byte encoding just in case
     if type(msg.payload) == bytes:
@@ -50,6 +47,5 @@ if __name__ == '__main__':
     client = mqtt.Client(None, clean_session=True)
     client.on_connect = on_connect
     client.on_message = on_message
-    client.on_log = on_log
     client.connect(MQTT_IP, MQTT_PORT, 60)
     client.loop_forever()
