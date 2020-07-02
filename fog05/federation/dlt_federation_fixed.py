@@ -69,11 +69,12 @@ def on_message(client, userdata, msg):
 
     if "center" in message and len(message["center"])>0:
         distance = compute_distance(float(message["center"][0]), float(message["center"][1]))
-        
+        print("Distance:", distance)
         #MQTT_MSG=json.dumps({"center": [x1,y1],"radius":  3});
         #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
         if distance < float(4.5):
             # entered_in_the_close_range = True
+            print("Triggered Federation!")
             mqtt_federation_trigger = True
         # elif entered_in_the_close_range == True and distance > start_federation_distance:
         else:
