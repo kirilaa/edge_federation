@@ -9,7 +9,7 @@
         "storage_size_gb": 5.0
     },
     "image": {
-        "uri": "file:///home/fog03/repository/vAP_consumer.tar.gz",
+        "uri": "file:///home/fog03/repository/hostapd03.tar.gz",
         "checksum": "97585a10323eb85fa51bbacfa702b9e8826b3dfa3d959e7324a3cc018465e160",
         "format": "tar.gz"
     },

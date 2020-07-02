@@ -120,7 +120,7 @@ def measure(label):
 #
 DESC_FOLDER = 'descriptors'
 net_desc = ['net.json']
-descs_d1 = ['fdu_dhcp.json','ap1.json']
+descs_d1 = ['gw.json','radius.json','ap1.json']
 descs_d2 = ['ap2.json']
 
 d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
@@ -359,16 +359,16 @@ def consumer(trusty):
     for n in nodes:
         print('UUID: {}'.format(n))
 
-    # measure('net_deploy_1')
-    # # input('Press to deploy net on consumer domain')
-    # time.sleep(1)
-    # net_deploy(net_desc,a,d1_n1)
-    # measure('net_deploy_2')
-    # time.sleep(1)
-    # net_deploy(net_desc,a,d1_n2)
-    # time.sleep(1)
-    # # input('Press to deploy containers on consumer domain')
-    # container_deploy(descs_d1,a)
+    measure('net_deploy_1')
+    # input('Press to deploy net on consumer domain')
+    time.sleep(1)
+    net_deploy(net_desc,a,d1_n1)
+    measure('net_deploy_2')
+    time.sleep(1)
+    net_deploy(net_desc,a,d1_n2)
+    time.sleep(1)
+    # input('Press to deploy containers on consumer domain')
+    container_deploy(descs_d1,a)
     path_d = os.path.join(DESC_FOLDER,net_desc[0])
     net_d = json.loads(read(path_d))
     time.sleep(1)
