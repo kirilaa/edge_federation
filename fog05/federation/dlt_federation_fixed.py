@@ -368,6 +368,7 @@ def consumer(trusty):
     # measure("brain_start")
 
 ########## FEDERATION STARTS HERE ###########################################################
+    measure('start')
     service_id = generateServiceId()
     print("SERVICE ID to be used: ", service_id)
     if trusty == 'trusty':
@@ -383,7 +384,6 @@ def consumer(trusty):
         print("Waiting for Federation request via MQTT\n")
         while mqtt_federation_trigger == False:
             print(".")
-            measure('start')
         client.loop_stop()
     else: 
         print("\nSERVICE_ID:",service_id)
