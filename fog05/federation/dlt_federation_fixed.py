@@ -45,7 +45,7 @@ mqtt_federation_trigger = False
 mqtt_federation_usage = False
 entered_in_the_close_range = False
 
-start_federation_distance = float(3.0)
+start_federation_distance = float(6.0)
 
 def on_connect(client, userdata, flags, rc):
 
@@ -72,7 +72,7 @@ def on_message(client, userdata, msg):
         print("Distance:", distance)
         #MQTT_MSG=json.dumps({"center": [x1,y1],"radius":  3});
         #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
-        if distance < float(4.5):
+        if distance < start_federation_distance:
             # entered_in_the_close_range = True
             print("Triggered Federation!")
             mqtt_federation_trigger = True
