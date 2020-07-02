@@ -339,7 +339,7 @@ def ServiceDeployed(service_id):
     result = Federation_contract.functions.ServiceDeployed(info= web3.toBytes(text= "hostapd"), _id= web3.toBytes(text= service_id)).transact({'from':block_address})
 
 def consumer(trusty):
-    mqtt_federation_trigger = False
+    global mqtt_federation_trigger = False
     #Configure measurements
     measurement["domain"] = 'consumer'
     # measure('start')
