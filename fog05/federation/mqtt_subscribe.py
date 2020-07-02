@@ -33,12 +33,12 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(MQTT_TOPIC)
 
 def on_message(client, userdata, msg):
+    global entered_in_the_close_range
     print(msg.payload)
     message = json.loads(msg.payload.decode("UTF-8"))
     print(message)
     if "center" in message and len(message["center"])>0:
         print("Entered")
-        print(entered_in_the_close_range)
         x = float(message["center"][0])
         y = float(message["center"][1])
         distance = compute_distance(x, y)
