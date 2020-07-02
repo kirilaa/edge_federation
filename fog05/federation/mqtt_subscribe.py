@@ -37,7 +37,7 @@ def on_message(client, userdata, msg):
     message = json.loads(msg.payload.decode("UTF-8"))
     print(message)
     if "center" in message and len(message["center"])>0:
-        print("Entered")
+        print("Entered", entered_in_the_close_range)
         x = float(message["center"][0])
         y = float(message["center"][1])
         distance = compute_distance(x, y)
@@ -47,7 +47,7 @@ def on_message(client, userdata, msg):
         if distance < 1.0:
             entered_in_the_close_range = True
             print("entered in range: True")
-        elif entered_in_the_close_range and distance > start_federation_distance:
+        elif entered_in_the_close_range == True and distance > start_federation_distance:
             mqtt_federation_trigger = True
             print("Triggered Federation!")
         else:
