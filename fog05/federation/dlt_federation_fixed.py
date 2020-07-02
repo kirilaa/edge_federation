@@ -428,7 +428,7 @@ def consumer(trusty):
         client.loop_start()
         print("Robot connecting to the new AP.....")
         while robot_connected == False:
-            print(.)
+            print(".")
         measure('robot_connected')
         client.loop_stop()
         print("Robot has connected!") 
