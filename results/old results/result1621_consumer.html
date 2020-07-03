@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .error {
+        color: red;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@4.8.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-627b48c2c4669f8a4efae0303c5dd244"}, "mark": "bar", "encoding": {"color": {"type": "nominal", "field": "procedure"}, "x": {"type": "quantitative", "field": "time"}, "y": {"type": "nominal", "field": "phases", "sort": "x"}}, "$schema": "https://vega.github.io/schema/vega-lite/v4.8.1.json", "datasets": {"data-627b48c2c4669f8a4efae0303c5dd244": [{"time": 38.996761322021484, "phases": "request_federation", "procedure": "federation procedure"}, {"time": 50.251657485961914, "phases": "choosing_provider", "procedure": "federation procedure"}, {"time": 50.526294469833374, "phases": "provider_deploys", "procedure": "federation procedure"}, {"time": 66.75799083709717, "phases": "federation_completed", "procedure": "federation procedure"}, {"time": 66.80755686759949, "phases": "end", "procedure": "federation procedure"}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div class="error" style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>
