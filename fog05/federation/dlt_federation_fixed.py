@@ -107,6 +107,7 @@ def measure(label):
         result_file = result_path+"result"+ result_string +'.json'
         with open(result_file, 'w') as result_json:
             json.dump(measurement, result_json)
+        print("=========>   MEASUREMENT RECORDED: \n%s\n=============\n" % result_file)
     elif label == '':
         measurement[int(time.time())] = time.time() - measurement['start']
         print("Time without label registered")
