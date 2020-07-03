@@ -539,7 +539,7 @@ if __name__ == '__main__':
     print("Blockchin addresses:", eth_address)
     print(sys.argv)
     if len(sys.argv) < 2:
-        print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty> -register(optional)'.format(
+        print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty|deploy> -register(optional)'.format(
             sys.argv[0]))
         exit(0)
     if len(sys.argv) == 4:
@@ -561,7 +561,7 @@ if __name__ == '__main__':
             if sys.argv[2] == 'trusty' or sys.argv[2] == 'untrusty':
                 consumer(sys.argv[2])
             else:
-                print("Please use \'trusty\' or \'untrusty\' for the argument {}" .format(sys.argv[2]))
+                print("Please use \'trusty\' or \'untrusty\' or \'deploy\' for the argument {}" .format(sys.argv[2]))
                 exit(0)
     elif sys.argv[1] == 'provider':
         block_address = eth_address[1]
