@@ -392,7 +392,6 @@ def consumer(trusty):
     # time.sleep(1)
     net_info = get_net_info(a,net_d['uuid'])
 ########## FEDERATION STARTS HERE ###########################################################
-    measure('start')
     service_id = generateServiceId()
     print("SERVICE ID to be used: ", service_id)
     if trusty == 'trusty':
@@ -414,6 +413,7 @@ def consumer(trusty):
     else: 
         print("\nSERVICE_ID:",service_id)
         debug_txt = input("\nCreate Service anouncement....(ENTER)")
+    measure('start')
     start = time.time()
     bids_event = AnnounceService(net_info, service_id, trusty)
     measure('request_federation')
