@@ -9,7 +9,7 @@ import os
 results_path= "../../results/"
 file_type = ".html"
 
-consumer_start = "request_federation"
+consumer_start = "robot_migration"
 provider_start = "trusty_info_get"
 
 def reduce_data(data):
@@ -29,7 +29,7 @@ def reverse_data(data):
 def generateProcedureLabels(data, domain, field):
     fed_label = [str("federation procedure")]*len(data)
     if domain == 'consumer':
-        fed_label[:data.index(field)] = [str("deployment procedure")]*len(data[:data.index(field)])
+        fed_label[data.index(field):] = [str("deployment procedure")]*len(data[data.index(field):])
         return fed_label
     elif domain == 'provider':
         fed_label[data.index(field):] = [str("deployment procedure")]*len(data[data.index(field):])
@@ -42,7 +42,7 @@ def plot_data(data):
     data_values = reduce_data(data.values())
     data_keys = reduce_data(data.keys())
     
-    field = "request_federation" if data["domain"] == 'consumer' else provider_start
+    field = consumer_start if data["domain"] == 'consumer' else provider_start
     procedure = generateProcedureLabels(data_keys, data["domain"], field)
 
     print(field, data["domain"], procedure)
@@ -67,7 +67,7 @@ def combine_plots(consumer_data, provider_data):
     provider_label = ['provider']*len(provider_keys)
 
     c_fed_label = [str("federation procedure")]*len(consumer_keys)
-    c_fed_label[:consumer_keys.index("request_federation")] = [str("deployment procedure")]*len(consumer_keys[:consumer_keys.index(consumer_start)])
+    c_fed_label[consumer_keys.index(consumer_start):] = [str("deployment procedure")]*len(consumer_keys[consumer_keys.index(consumer_start):])
     
     p_fed_label = [str("federation procedure")]*len(provider_keys)
     p_fed_label[provider_keys.index(provider_start):] = [str("deployment procedure")]*len(provider_keys[provider_keys.index(provider_start):])
