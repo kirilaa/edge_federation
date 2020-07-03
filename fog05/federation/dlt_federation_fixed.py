@@ -389,7 +389,10 @@ def consumer(trusty):
     print('Nodes:')
     for n in nodes:
         print('UUID: {}'.format(n))
-
+    path_d = os.path.join(DESC_FOLDER,net_desc[0])
+    net_d = json.loads(read(path_d))
+    # time.sleep(1)
+    net_info = get_net_info(a,net_d['uuid'])
 ########## FEDERATION STARTS HERE ###########################################################
     measure('start')
     service_id = generateServiceId()
