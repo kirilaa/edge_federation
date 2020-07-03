@@ -376,6 +376,8 @@ def consumer(trusty):
     global mqtt_federation_trigger
     global robot_connected
     global measurement
+
+    a = FIMAPI(IP1)
     #Configure measurements
     measurement["domain"] = 'consumer'
     print('Consumer on already deployed nodes')
