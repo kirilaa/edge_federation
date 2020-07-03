@@ -353,7 +353,7 @@ def deploy_admin1():
     for n in nodes:
         print('UUID: {}'.format(n))
     measurement["domain"] = 'consumer'
-    measure['start']    
+    measure('start')    
     time.sleep(1)
     net_deploy(net_desc,a,d1_n1)
     time.sleep(1)
