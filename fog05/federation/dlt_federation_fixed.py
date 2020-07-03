@@ -60,7 +60,7 @@ def on_message(client, userdata, msg):
     global robot_connected
     print('received message: \n%s over topic: %s' % (msg,
         MQTT_TOPIC))
-    print('received message %s' % str(msg.payload))
+    # print('received message %s' % str(msg.payload))
 
 
     # Check for byte encoding just in case
@@ -72,13 +72,11 @@ def on_message(client, userdata, msg):
     if "center" in message and len(message["center"])>0:
         distance = compute_distance(float(message["center"][0]), float(message["center"][1]))
         print("Distance:", distance)
-        #MQTT_MSG=json.dumps({"center": [x1,y1],"radius":  3});
-        #Customer ap coordinates: x: 30.4075826699 y: -7.67201633367
+        
         if distance < start_federation_distance:
-            # entered_in_the_close_range = True
             print("Triggered Federation!")
             mqtt_federation_trigger = True
-        # elif entered_in_the_close_range == True and distance > start_federation_distance:
+        
         else:
             mqtt_federation_trigger = False
     
@@ -107,7 +105,7 @@ def measure(label):
         result_file = result_path+"result"+ result_string +'.json'
         with open(result_file, 'w') as result_json:
             json.dump(measurement, result_json)
-        print("=========>   MEASUREMENT RECORDED: \n%s\n=============\n" % result_file)
+        print("=========>   MEASUREMENT RECORDED: \n%s\n====================================\n" % result_file)
     elif label == '':
         measurement[int(time.time())] = time.time() - measurement['start']
         print("Time without label registered")
