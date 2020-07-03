@@ -340,16 +340,10 @@ def CheckWinner(service_id):
 def ServiceDeployed(service_id):
     result = Federation_contract.functions.ServiceDeployed(info= web3.toBytes(text= "hostapd"), _id= web3.toBytes(text= service_id)).transact({'from':block_address})
 
-def consumer(trusty):
-    global mqtt_federation_trigger
-    global robot_connected
-    global measurement
-    #Configure measurements
-    measurement["domain"] = 'consumer'
-    measure('start')
-    # Access the fog05 domain web socket
-    a = FIMAPI(IP1)
+def deploy_admin1():
+     a = FIMAPI(IP1)
     # Get the nodes from the domain 
+    print('Deploying on consumer nodes')
     nodes = a.node.list()
     if len(nodes) == 0:
         print('No nodes')
@@ -359,23 +353,34 @@ def consumer(trusty):
     for n in nodes:
         print('UUID: {}'.format(n))
 
-    measure('net_deploy_1')
-    # input('Press to deploy net on consumer domain')
     time.sleep(1)
     net_deploy(net_desc,a,d1_n1)
-    measure('net_deploy_2')
     time.sleep(1)
     net_deploy(net_desc,a,d1_n2)
     time.sleep(1)
-    # input('Press to deploy containers on consumer domain')
     container_deploy(descs_d1,a)
     path_d = os.path.join(DESC_FOLDER,net_desc[0])
     net_d = json.loads(read(path_d))
     time.sleep(1)
     net_info = get_net_info(a,net_d['uuid'])
-    # measure('collect_net_info')
-    # restartBrainMachine()
-    # measure("brain_start")
+    restartBrainMachine()
+    print("Deployment finished")
+
+def consumer(trusty):
+    global mqtt_federation_trigger
+    global robot_connected
+    global measurement
+    #Configure measurements
+    measurement["domain"] = 'consumer'
+    print('Consumer on already deployed nodes')
+    nodes = a.node.list()
+    if len(nodes) == 0:
+        print('No nodes')
+        exit(-1)
+    # Print the nodes from the domain
+    print('Nodes:')
+    for n in nodes:
+        print('UUID: {}'.format(n))
 
 ########## FEDERATION STARTS HERE ###########################################################
     measure('start')
@@ -451,35 +456,13 @@ def consumer(trusty):
         measure('end')
         input('Press enter to exit (cointainers and networks not terminated)')
         exit(0)
-    # input('Press enter to terminate')
-    # a.fdu.terminate(instid)
-    # a.fdu.offload(e_uuid)
-    # input("Press enter to remove network")
-    # a.network.remove_network_from_node(n_uuid, n1)
-    # a.network.remove_network(n_uuid)
-    
 
 def provider():
     global measurement
     measurement["domain"] = 'provider'
-    # a = FIMAPI(ip)
-    provider_domain = FIMAPI(IP2)
-    # a2 = FIMAPI('163.117.139.226')
-    # Get the nodes from the domain 
-    # nodes = provider_domain.node.list()
-    # if len(nodes) == 0:
-    #     print('No nodes')
-    #     exit(-1)
-    # # Print the nodes from the domain
-    # print('Nodes:')
-    # for n in nodes:
-    #     print('UUID: {}'.format(n))
-    
-    # # Load the FDU (descriptors)
-    # path_d = os.path.join(DESC_FOLDER,descs_d2[0])
-    # fdu_d = FDU(json.loads(read(path_d)))
 
-    # debug_txt = input("\nBegin listening?")
+    provider_domain = FIMAPI(IP2)
+    
     service_id = ''
     print("\nSERVICE_ID:",service_id)
     debug_txt = input("\nStart listening for federation events....(ENTER)")
@@ -529,58 +512,27 @@ def provider():
             net_info = net_d
             
         # Create network based on the descriptor
-        # input("Press enter to create network")
         # Get info if the network is created
         print(net_d['uuid'], net_d['net_type'])
         
         measure('net_deploy')
         provider_domain.network.add_network(net_info)
         # Add the created network to the node (n1)
-        # input('press enter to network creation')
+       input('press enter to network creation')
         measure('net_add')
         time.sleep(1)
         provider_domain.network.add_network_to_node(net_info['uuid'], d2_n1)
 
         measure('container_deploy')
         time.sleep(1)
-        # input('press enter to onboard on provider domain')
         container_deploy(descs_d2,provider_domain)
-    
-        # #  On-board the FDU
-        # input('press enter to onboard descriptor')
-        # res = a.fdu.onboard(fdu_d)
-        # # Get the identifier of the on-boarded FDU
-        # e_uuid = res.get_uuid()
-        # # Define an instance of the on-boarded FDU
-        # input('Press enter to define')
-        # inst_info = a.fdu.define(e_uuid)
-        # # Get the ID of the defined FDU instance
-        # print(inst_info.to_json())
-        # instid = inst_info.get_uuid()
-
-        # # Configure the defined FDU instance
-        # input('Press enter to configure')
-        # a.fdu.configure(instid)
-
-        # # Start the configured FDU instance
-        # input('Press enter to start')
-        # a.fdu.start(instid)
-        # # Get the info of the started FDU instance
-        # input('Press get info')
-        # info = a.fdu.instance_info(instid)
-        # print(info.to_json())
-
 ######################### UNTIL HERE ####################################################################
         measure('deployment_finished')
         ServiceDeployed(service_id)
     else:
         print("I am not a Winner")
     measure('end')
-    # input('Press enter to exit (cointainers and networks not terminated)')
     print('EXIT (cointainers and networks not terminated)')
-
-    # provider_domain.fdu.terminate(instid)
-    # provider_domain.fdu.offload(e_uuid)
     exit(0)
 
 if __name__ == '__main__':
@@ -594,6 +546,8 @@ if __name__ == '__main__':
         if sys.argv[3] == 'mqtt':
             mqtt_federation_usage = True
     if sys.argv[1] == 'consumer':
+        if len(sys.argv) > 2 and sys.argv[2] == "deploy":
+            deploy_admin1()
         block_address = coinbase
         domain_name = "AD1"
         print(sys.argv[1], sys.argv[2])
@@ -622,38 +576,3 @@ if __name__ == '__main__':
             provider()
     else:
         exit(0)
-
-    # if sys.argv[1] == 'consumer' and len(sys.argv) <= 4:
-    #     block_address = coinbase
-    #     if len(sys.argv) == 3 and sys.argv[3] == "-register":
-    #         print(sys.argv[1], sys.argv[2])
-    #         domain_name = "AD1"
-    #         try:
-    #             print("Registering....")
-    #             tx_hash = RegisterDomain(domain_name)
-    #         except ValueError as e:
-    #             print(e)
-    #         finally:
-    #             print("Starting consumer domain....")
-    #             consumer(sys.argv[2])
-    #     elif sys.argv[2] == 'trusty' or sys.argv[2] == 'untrusty':
-    #         print("Starting consumer domain....")
-    #         consumer(sys.argv[2])
-    #     else:
-    #         print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty> -register(optional)'.format(sys.argv[0]))
-    #         exit(0)
-    # elif sys.argv[1] == 'provider':
-    #     block_address = eth_address[1]
-    #     if len(sys.argv) >= 2 and sys.argv[2] == "-register":
-    #         domain_name = "AD2"
-    #         try:
-    #             print("Registering....")
-    #             tx_hash = RegisterDomain(domain_name)
-    #         except ValueError as e:
-    #             print(e)
-    #         finally:
-    #             print("Starting provider domain....")
-    #             provider()
-    #     else:
-    #         print("Starting provider domain....")
-    #         provider()
