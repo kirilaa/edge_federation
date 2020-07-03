@@ -147,6 +147,10 @@ def restartBrainMachine():
         stream = os.popen('virsh start brain_kiril')
         virsh_started = stream.read()
         print("Brain has started")
+    else:
+        stream = os.popen('virsh start brain_kiril')
+        virsh_started = stream.read()
+        print("Brain has started")
         
     
 
