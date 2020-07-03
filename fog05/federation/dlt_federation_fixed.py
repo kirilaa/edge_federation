@@ -549,21 +549,22 @@ if __name__ == '__main__':
     if sys.argv[1] == 'consumer':
         if len(sys.argv) > 2 and sys.argv[2] == "deploy":
             deploy_admin1()
-        block_address = coinbase
-        domain_name = "AD1"
-        print(sys.argv[1], sys.argv[2])
-        try:
-            print("Registering....")
-            tx_hash = RegisterDomain(domain_name)
-        except ValueError as e:
-            print(e)
-        finally:
-            print("Starting consumer domain....")
-            if sys.argv[2] == 'trusty' or sys.argv[2] == 'untrusty':
-                consumer(sys.argv[2])
-            else:
-                print("Please use \'trusty\' or \'untrusty\' or \'deploy\' for the argument {}" .format(sys.argv[2]))
-                exit(0)
+        else:
+            block_address = coinbase
+            domain_name = "AD1"
+            print(sys.argv[1], sys.argv[2])
+            try:
+                print("Registering....")
+                tx_hash = RegisterDomain(domain_name)
+            except ValueError as e:
+                print(e)
+            finally:
+                print("Starting consumer domain....")
+                if sys.argv[2] == 'trusty' or sys.argv[2] == 'untrusty':
+                    consumer(sys.argv[2])
+                else:
+                    print("Please use \'trusty\' or \'untrusty\' or \'deploy\' for the argument {}" .format(sys.argv[2]))
+                    exit(0)
     elif sys.argv[1] == 'provider':
         block_address = eth_address[1]
         domain_name = "AD2"
