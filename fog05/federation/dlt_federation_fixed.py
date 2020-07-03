@@ -341,7 +341,7 @@ def ServiceDeployed(service_id):
     result = Federation_contract.functions.ServiceDeployed(info= web3.toBytes(text= "hostapd"), _id= web3.toBytes(text= service_id)).transact({'from':block_address})
 
 def deploy_admin1():
-     a = FIMAPI(IP1)
+    a = FIMAPI(IP1)
     # Get the nodes from the domain 
     print('Deploying on consumer nodes')
     nodes = a.node.list()
