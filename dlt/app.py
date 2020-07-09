@@ -9,7 +9,11 @@ import json
 from web3.providers.rpc import HTTPProvider
 
 from web3 import Web3
+from web3.middleware import geth_poa_middleware
 web3= Web3(Web3.WebsocketProvider("ws://163.117.140.69:7545"))
+web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+
+print(web3.clientVersion)
 
 abi_path = "../smart-contracts/build/contracts/"
 
@@ -20,7 +24,8 @@ with open(abi_path+"Federation.json") as c_json:
     contract_json = json.load(c_json)
 
 contract_abi = contract_json["abi"]
-contract_address = Web3.toChecksumAddress('0xc76d33f788a17fe014b9E8D00505FA51F9804f97')
+contract_address = Web3.toChecksumAddress('0xE97a12e701D825a88B1F916ea06C123f9d2682cD')
+# contract_address = Web3.toChecksumAddress('0xc76d33f788a17fe014b9E8D00505FA51F9804f97')
 
 Federation_contract = web3.eth.contract(abi= contract_abi, address = contract_address)
 
@@ -33,6 +38,9 @@ eth_address = web3.eth.accounts
 # {'uuid': '6cc2aa30-1dcf-4c93-a57e-433fd0bd498e', 'name': 'net1', 'net_type': 'ELAN', 'is_mgmt': False, 'port': 4789, 'vni': 1170838, 'mcast_addr': '239.0.202.79'}
 # from web3.auto.gethdev import w3
 # >>> w3.is_encodable('bytes2', b'12')
+
+#0xc3e8178dab59b6d048981b691f7b55437f4cb86b
+#0x89db70db61a464e02fc4077549a053b255d31b01
 
 print("Etherbase:", coinbase)
 # input("\nGet info of Operator (ENTER)")

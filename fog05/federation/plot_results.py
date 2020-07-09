@@ -9,8 +9,8 @@ import os
 results_path= "../../results/"
 file_type = ".html"
 
-consumer_start = "robot_migration"
-provider_start = "trusty_info_get"
+consumer_start = "robot vAP2 discovery"
+provider_start = "trusty info get"
 
 def reduce_data(data):
     data = list(data)
@@ -27,12 +27,12 @@ def reverse_data(data):
     return data_reversed
 
 def generateProcedureLabels(data, domain, field):
-    fed_label = [str("federation procedure")]*len(data)
+    fed_label = [str("#ff7f0e")]*len(data)
     if domain == 'consumer':
-        fed_label[data.index(field):] = [str("deployment procedure")]*len(data[data.index(field):])
+        fed_label[data.index(field):] = [str("#1f77b4")]*len(data[data.index(field):])
         return fed_label
     elif domain == 'provider':
-        fed_label[data.index(field):] = [str("deployment procedure")]*len(data[data.index(field):])
+        fed_label[data.index(field):] = [str("#1f77b4")]*len(data[data.index(field):])
         return fed_label
     else:
         return data
@@ -53,6 +53,43 @@ def plot_data(data):
 
     return plot
 
+def generateColorBars(data):
+    for i,e, in reversed(list(enumerate(data))):
+        if i>0:
+            data[i] = data[i] - data[i-1]
+
+    
+
+    return data
+
+def generateWhiteBars(data):
+    new_data = data[:-1]
+    return new_data
+
+        
+def plot_data2(data):
+    data_values = reduce_data(data.values())
+    data_keys = reduce_data(data.keys())
+    field = consumer_start if data["domain"] == 'consumer' else provider_start
+    procedure = generateProcedureLabels(data_keys, data["domain"], field)
+
+
+    white_values = generateWhiteBars(data_values)
+    white_keys = data_keys[1:]
+    white_label = [str("white")]*len(white_keys)
+    print(len(white_keys), len(white_values))    
+    white_plot = pd.DataFrame({'time':white_values, 'phases': white_keys, 'procedure':white_label})
+
+    data_values = generateColorBars(data_values)
+    print(field, data["domain"], procedure)
+    plot_data = pd.DataFrame({'time':data_values, 'phases':data_keys, 'procedure':procedure})
+    sorted_data = plot_data.append(white_plot)
+
+    plot = alt.Chart(sorted_data).mark_bar().encode( x= 'time', y= alt.Y('phases',sort='x'), color=alt.Color('procedure', scale=None))
+    # plot = alt.Chart(plot_data).mark_line(point=True).encode( x= 'time', y= alt.Y('phases',sort='x'), color='phases')
+
+    return plot
+
 
 def combine_plots(consumer_data, provider_data):
     consumer_values = reduce_data(consumer_data.values())
@@ -66,10 +103,10 @@ def combine_plots(consumer_data, provider_data):
     consumer_label = ['consumer']*len(consumer_keys)
     provider_label = ['provider']*len(provider_keys)
 
-    c_fed_label = [str("federation procedure")]*len(consumer_keys)
+    c_fed_label = [str("federation procedure using DLT")]*len(consumer_keys)
     c_fed_label[consumer_keys.index(consumer_start):] = [str("deployment procedure")]*len(consumer_keys[consumer_keys.index(consumer_start):])
     
-    p_fed_label = [str("federation procedure")]*len(provider_keys)
+    p_fed_label = [str("federation procedure using DLT")]*len(provider_keys)
     p_fed_label[provider_keys.index(provider_start):] = [str("deployment procedure")]*len(provider_keys[provider_keys.index(provider_start):])
   
 
@@ -103,8 +140,8 @@ if __name__ == '__main__':
         with open(results_path+sys.argv[2]+".json") as provider_file:
             provider_data = json.load(provider_file)
 
-    plot_consumer = plot_data(consumer_data)
-    plot_provider = plot_data(provider_data)
+    plot_consumer = plot_data2(consumer_data)
+    plot_provider = plot_data2(provider_data)
 
     cobined_plot = combine_plots(consumer_data, provider_data)
     combined_file_string = sys.argv[1].split('_')[0] + "_combined"
