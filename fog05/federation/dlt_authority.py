@@ -419,11 +419,11 @@ def consumer(trusty):
     measure('start')
     start = time.time()
     bids_event = AnnounceService(net_info, service_id, trusty)
-    measure('request_federation')
-    newService_event = ServiceAnnouncementEvent()
-    check_event = newService_event.get_all_entries()
-    if len(check_event) > 0:
-        measure('federation_announced')
+    measure('request federation')
+    # newService_event = ServiceAnnouncementEvent()
+    # check_event = newService_event.get_all_entries()
+    # if len(check_event) > 0:
+    #     measure('federation_announced')
     bidderArrived = False
     while bidderArrived == False:
         new_events = bids_event.get_all_entries()
@@ -434,16 +434,16 @@ def consumer(trusty):
             bid_index = int(event['args']['max_bid_index'])
             bidderArrived = True
             if int(bid_index) < 2:
-                measure('choosing_provider')
+                measure('choosing provider')
                 bid_info = GetBidInfo(int(bid_index-1), service_id)
                 print(bid_info)
                 ChooseProvider(int(bid_index)-1, service_id)
-                measure('provider_deploys')
+                measure('provider deployment of vAP2')
                 break
     serviceDeployed = False
     while serviceDeployed == False:
         serviceDeployed = True if GetServiceState(service_id) == 2 else False
-    measure('federation_completed')
+    measure('federation completed')
     serviceDeployedInfo = GetServiceInfo(service_id, False)
     end = time.time()
     print(serviceDeployedInfo)
@@ -453,13 +453,14 @@ def consumer(trusty):
     if mqtt_federation_usage:
         MQTT_MSG=json.dumps({"mac": serviceDeployedInfo["name"]})
         client.publish("/experiment/allocation",MQTT_MSG)
-        measure('robot_migration')
+        # measure('robot vAP2 discovery')
         client.subscribe("/robot/connection")
+        measure('robot connecting to vAP2')
         client.loop_start()
         print("Robot connecting to the new AP.....")
         while robot_connected == False:
             time.time()
-        measure('robot_connected')
+        measure('robot connected to vAP2')
         client.loop_stop()
         print("Robot has connected!") 
         measure('end')
@@ -493,7 +494,7 @@ def provider():
             print("OPEN = ", len(open_services))
             newService = True
     service_id = open_services[-1]
-    measure('bid_placed')
+    measure('bid placed')
     winnerChosen_event = PlaceBid(service_id)
     winnerChosen = False
     while winnerChosen == False:
@@ -501,25 +502,25 @@ def provider():
         for event in new_events:
             event_serviceid = web3.toText(event['args']['_id'])
             if event_serviceid == service_id:
-                measure('winner_choosen')
+                measure('winner choosen')
                 winnerChosen = True
                 break
     am_i_winner = CheckWinner(service_id)
     if am_i_winner == True:
-        measure('deployment_start')
+        measure('deployment start')
         net_d = GetServiceInfo(service_id, True)
 ########## FEDERATED SERVICE DEPLOYEMENT HERE ###########################################################
         print(net_d)
         if net_d['privacy'] == "trusty": 
             print("Trusty federation")
             # a2 = FIMAPI(net_d["net_type"])
-            measure('trusty_info_get')
+            measure('trusty info get')
             consumer_domain = FIMAPI(net_d["net_type"])
             net_info = get_net_info(consumer_domain,net_d['uuid'])
             print(consumer_domain.network.list())
             print('Net info {}'.format(net_info))
         else:
-            measure('untrusty_info_get')
+            measure('untrusty info get')
             print("Untrusty federation")
             net_info = net_d
             
@@ -527,19 +528,19 @@ def provider():
         # Get info if the network is created
         print(net_d['uuid'], net_d['net_type'])
         
-        measure('net_deploy')
+        measure('deploy inter-domain net')
         provider_domain.network.add_network(net_info)
         # Add the created network to the node (n1)
         # input('press enter to network creation')
-        measure('net_add')
+        measure('add inter-domain net')
         time.sleep(1)
         provider_domain.network.add_network_to_node(net_info['uuid'], d2_n1)
 
-        measure('container_deploy')
+        measure('container deploy')
         time.sleep(1)
         container_deploy(descs_d2,provider_domain)
 ######################### UNTIL HERE ####################################################################
-        measure('deployment_finished')
+        measure('deployment finished')
         ServiceDeployed(service_id)
     else:
         print("I am not a Winner")
