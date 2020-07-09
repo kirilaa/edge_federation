@@ -10,10 +10,13 @@ import math
 from time import gmtime, strftime
 from web3 import Web3, HTTPProvider, IPCProvider
 from web3.contract import ConciseContract
+from web3.middleware import geth_poa_middleware
+
 
 blockchain_ip = "163.117.140.69"
 blockchain_port = "7545"
 web3= Web3(Web3.WebsocketProvider("ws://"+blockchain_ip+":"+blockchain_port))
+web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 abi_path = "../../smart-contracts/build/contracts/"
 with open(abi_path+"Federation.json") as c_json:
     contract_json = json.load(c_json)
