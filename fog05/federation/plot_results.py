@@ -9,7 +9,8 @@ import os
 results_path= "../../results/"
 file_type = ".html"
 
-consumer_start = "robot vAP2 discovery"
+consumer_start = "robot connecting to vAP2"
+# consumer_start = "end"
 provider_start = "trusty info get"
 
 def reduce_data(data):
@@ -118,8 +119,8 @@ def combine_plots(consumer_data, provider_data):
     # c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= None))
     # p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= None))
     
-    c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= alt.Legend(orient="bottom")))
-    p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= alt.Legend(orient="bottom")))
+    c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= alt.X('time', scale=alt.Scale(domain=[0,28])), y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= alt.Legend(orient="bottom")))
+    p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= alt.X('time', scale=alt.Scale(domain=[0,28])), y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= alt.Legend(orient="bottom")))
     
     plot = c_plot + p_plot
 

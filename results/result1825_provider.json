@@ -1,1 +1,15 @@
-{"domain": "provider", "start": 1593800727.3465326, "bid_placed": 2.5033950805664062e-05, "winner_choosen": 9.613424062728882, "deployment_start": 9.660673141479492, "trusty_info_get": 9.685107231140137, "net_deploy": 9.709419965744019, "net_add": 9.70969033241272, "container_deploy": 10.73363184928894, "on_board_ap2.json": 11.757328271865845, "configure_ap2.json": 12.231447458267212, "start_ap2.json": 13.104247093200684, "info_ap2.json": 15.218559503555298, "deployment_finished": 15.256060600280762, "end": 15.346156120300293}
+{"domain": "provider", 
+    "start": 1593800727.3465326, 
+    "bid placed": 2.5033950805664062e-05, 
+    "winner choosen": 9.613424062728882, 
+    "deployment start": 9.660673141479492, 
+    "trusty info get": 9.685107231140137, 
+    "deploy inter-domain net": 9.709419965744019, 
+    "add inter-domain net ": 9.70969033241272, 
+    "container deploy": 10.73363184928894, 
+    "on-board vAP2": 11.757328271865845, 
+    "configure vAP2": 12.231447458267212, 
+    "start vAP2": 13.104247093200684, 
+    "get info vAP2": 15.218559503555298, 
+    "deployment finished": 15.256060600280762, 
+    "confirm deployment": 15.346156120300293}

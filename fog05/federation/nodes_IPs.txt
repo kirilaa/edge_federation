@@ -1,0 +1,3 @@
+fog01: ssh netcom@163.117.140.237
+fog02: ssh netcom@163.117.140.37
+fog03: ssh fog03@163.117.140.245

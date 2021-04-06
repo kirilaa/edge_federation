@@ -27703,10 +27703,100 @@
       "links": {},
       "address": "0x91f02525F21B7F6C89E6feC4AdD85559121F9A23",
       "transactionHash": "0xe22a060c70a1b31fc0399d4b5d86995de341b2ba0f8a0592f6cd021011d17e3a"
+    },
+    "20": {
+      "events": {
+        "0xdb578ec7204282ed3ffcec84ef9d2ca9adda7fb0c0b707010bad5cce9f18f41f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "_id",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "max_bid_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewBid",
+          "type": "event"
+        },
+        "0xe8e68cef1c3a761ed7be7e8463a375f27f7bc335e51824223cacce636ec5c3fe": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "name",
+              "type": "bytes32"
+            }
+          ],
+          "name": "OperatorRegistered",
+          "type": "event"
+        },
+        "0xc36b5a7833301a31fd0ae95ceeab5fda3f6a3aee8a8689bf06360711592a6a0f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "requirements",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ServiceAnnouncement",
+          "type": "event"
+        },
+        "0x0fa967e5a697cd5b1a32e3ed8e2a5b983caf2ae1bb54e8fe37fae071347e8fea": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "_id",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ServiceAnnouncementClosed",
+          "type": "event"
+        },
+        "0x5cfc0037f79529279d288edea103e1e1d3f2a2b727bdf8113017043ea939488b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "_id",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ServiceDeployedEvent",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xE97a12e701D825a88B1F916ea06C123f9d2682cD",
+      "transactionHash": "0x898177781ef8764b5e745d8f627d877db93064945b1c7ef1bb6a32b1f62d7f48"
     }
   },
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-07-02T17:29:37.413Z",
+  "updatedAt": "2020-07-05T11:58:24.360Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}
