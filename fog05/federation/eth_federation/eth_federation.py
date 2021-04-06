@@ -11,31 +11,28 @@ from time import gmtime, strftime
 from web3 import Web3, HTTPProvider, IPCProvider
 from web3.contract import ConciseContract
 
-blockchain_ip = "163.117.140.69"
-blockchain_port = "7545"
-web3= Web3(Web3.WebsocketProvider("ws://"+blockchain_ip+":"+blockchain_port))
+DESC_FOLDER = 'descriptors'
+net_desc = ['net.json']
+descs_d1 = ['gw.json','radius.json','ap1.json']
+descs_d2 = ['ap2.json']
+
+d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
+d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog03
+d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
+
+federation_ContractAddress = "0x38B1Fc2FC3AE46D3f94ACEAa16e48E7e2141Ad63"
+
+node_IP_address = ''
+coinbase = ''
+Federation_contract = {}
+web3 = {}
 abi_path = "../../smart-contracts/build/contracts/"
-with open(abi_path+"Federation.json") as c_json:
-    contract_json = json.load(c_json)
 
-contract_abi = contract_json["abi"]
-contract_address = Web3.toChecksumAddress('0x91f02525F21B7F6C89E6feC4AdD85559121F9A23')
-
-Federation_contract = web3.eth.contract(abi= contract_abi, address = contract_address)
-
-coinbase = web3.eth.coinbase
-eth_address = web3.eth.accounts
-block_address = ""
-service_id = ""
-
-################### MQTT ###################################
+result_path= "../../results/"
+record = {}
 
 ap_x = float(30.4075826699)
 ap_y = float(-7.67201633367)
-
-def compute_distance(x,y):
-    distance = float((x-ap_x)*(x-ap_x) + (y-ap_y)*(y-ap_y))
-    return math.sqrt(distance)
 
 MQTT_IP="192.168.122.3"
 MQTT_PORT=1883
@@ -46,6 +43,12 @@ mqtt_federation_usage = False
 entered_in_the_close_range = False
 
 start_federation_distance = float(4.0)
+
+#___________________________________________________________
+
+def compute_distance(x,y):
+    distance = float((x-ap_x)*(x-ap_x) + (y-ap_y)*(y-ap_y))
+    return math.sqrt(distance)
 
 def on_connect(client, userdata, flags, rc):
 
@@ -89,17 +92,6 @@ def on_message(client, userdata, msg):
             print("Robot connected False")
             robot_connected = False
 
-#___________________________________________________________
-
-node_IP_address = ''
-coinbase = ''
-Federation_contract = {}
-web3 = {}
-abi_path = "/home/mininet/mininet/examples/"
-
-result_path = "/home/mininet/mininet/examples/results/"
-record = {}
-
 
 def ConfigureWeb3():
     global node_IP_address
@@ -115,7 +107,7 @@ def ConfigureWeb3():
         contract_json = json.load(c_json)
 
     contract_abi = contract_json["abi"]
-    contract_address = Web3.toChecksumAddress('0x565dfE5dF9037E6C799b1e054523c275DAeCffec')
+    contract_address = Web3.toChecksumAddress(federation_ContractAddress)
     Federation_contract = web3.eth.contract(abi= contract_abi, address = contract_address)
     coinbase = web3.eth.coinbase
 
@@ -141,36 +133,36 @@ def isRegistered(host_id):
 
 def startProfiling(node_id, state):
     start_measure_string = "none"
-    if int(node_id) == 10:
-        start_measure_string = "ssh netcom@192.168.100.50 \"screen -d -m python /home/netcom/measure.py "+str(state)+"\""
-    elif int(node_id) == 20:
-        start_measure_string = "ssh netcom@192.168.100.60 \"screen -d -m python /home/netcom/measure.py "+str(state)+"\""
+    if int(node_id) == 37:
+        start_measure_string = "ssh netcom@163.117.140.34 \"screen -d -m python /home/netcom/measure.py "+str(state)+"\""
+    elif int(node_id) == 245:
+        start_measure_string = "ssh netcom@163.117.140.25 \"screen -d -m python /home/netcom/measure.py "+str(state)+"\""
     else: 
-        start_measure_string = "ssh uc3m@192.168.100.70 \"screen -d -m python /home/uc3m/measure.py "+str(state)+"\""
+        start_measure_string = "ssh uc3m@163.117.140.35 \"screen -d -m python /home/uc3m/measure.py "+str(state)+"\""
     if start_measure_string != "none":
         output_stream = os.system(start_measure_string)
         print("Measure profiling started")
 
 def stopProfiling(node_id):
     stop_measure_string = "none"
-    if int(node_id) == 10:
-        stop_measure_string = "ssh netcom@192.168.100.50 \"killall screen\""
-    elif int(node_id) == 20:
-        stop_measure_string = "ssh netcom@192.168.100.60 \"killall screen\""
+    if int(node_id) == 37:
+        stop_measure_string = "ssh netcom@163.117.140.34 \"killall screen\""
+    elif int(node_id) == 245:
+        stop_measure_string = "ssh netcom@163.117.140.25 \"killall screen\""
     else: 
-        stop_measure_string = "ssh uc3m@192.168.100.70 \"killall screen\""
+        stop_measure_string = "ssh uc3m@163.117.140.35 \"killall screen\""
     if stop_measure_string != "none":
         output_stream = os.system(stop_measure_string)
         print("Measure profiling stopped")
 
 def setBlockchainNodeIP(node_id):
     global node_IP_address
-    if int(node_id) == 10:
-        node_IP_address = "192.168.100.50"
-    elif int(node_id) == 20:
-        node_IP_address = "192.168.100.60"
+    if int(node_id) == 37:
+        node_IP_address = "163.117.140.34"
+    elif int(node_id) == 245:
+        node_IP_address = "163.117.140.25"
     else: 
-        node_IP_address = "192.168.100.70"
+        node_IP_address = "163.117.140.35"
 
 def measure(label):
     global record
@@ -191,21 +183,12 @@ def measure(label):
         with open(result_file, 'w') as result_json:
             json.dump(record, result_json)
 
-####### README ######
-#
-#  Update n1 and n2 according to your node ids in the two domains.
-#
-DESC_FOLDER = 'descriptors'
-net_desc = ['net.json']
-descs_d1 = ['gw.json','radius.json','ap1.json']
-descs_d2 = ['ap2.json']
-
-d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
-d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog03
-d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
-
-IP1 = "163.117.139.226"
-IP2 = "163.117.139.70"
+def getIPaddress():
+    stream = os.popen('ip a | grep \"global dynamic\"').read()
+    stream = stream.split('inet ',1)
+    ip_address = stream[1].split('/',1)
+    ipaddress = ip_address[0]
+    return str(ipaddress)
 
 def restartBrainMachine():
     stream = os.popen('virsh list')
@@ -229,7 +212,47 @@ def restartBrainMachine():
         virsh_started = stream.read()
         print("Brain has started")
         
-    
+def remove_containers(a):
+    fdus={}
+
+    nodes = a.node.list()
+    if len(nodes) == 0:
+        print('No nodes')
+        exit(-1)
+
+    print('Nodes:')
+    for n in nodes:
+        print('UUID: {}'.format(n))
+        discs = a.fdu.list()
+        for d_id in discs:
+            print('d_id: '+ str(d_id))
+            info = a.fdu.instance_list(d_id)
+            print ('info : {}'.format(info))
+            if n in info:
+                time.sleep(1)
+                i_ids=info[n]
+                for iid in i_ids:
+                    print ('Terminating iid : {}'.format(iid))
+                    #a.fdu.terminate(iid)
+                    #a.fdu.offload(d_id)
+                    a.fdu.stop(iid)
+                    time.sleep(1)
+                    a.fdu.clean(iid)
+                    time.sleep(1)
+                    a.fdu.undefine(iid)
+                    time.sleep(1)
+                    a.fdu.offload(d_id)
+                    time.sleep(1)
+
+def remove_net(a,node_id):
+    nets = a.network.list()
+    if nets:
+        print ('networks : {}'.format(nets))
+        for n in nets:
+            net_uuid=n['uuid']
+            print ('net_id : {}'.format(net_uuid))
+            a.network.remove_network_from_node(net_uuid, node_id)
+            a.network.remove_network(net_uuid)    
 
 def generateServiceId():
     time_string = strftime("%H%M", gmtime())
@@ -325,10 +348,26 @@ def UnpackNetData(service_info):
     return net_info
     
 def RegisterDomain(domain_name):
-    tx_hash = Federation_contract.functions.addOperator(Web3.toBytes(text=domain_name)).transact({'from': block_address})
+    tx_hash = Federation_contract.functions.addOperator(Web3.toBytes(text=domain_name)).transact({'from': coinbase})
     return tx_hash
 
-def AnnounceService(net_info, service_id, trusty):
+def SetFog05(ip_addr):
+    a = FIMAPI(ip_addr)
+    nodes = a.node.list()
+    if len(nodes) == 0:
+        print('No nodes, Fog05 failed')
+        exit(-1)
+    # Print the nodes from the domain
+    return a
+
+def setServiceID():
+    #Configure the domain variables
+
+    timestamp = int(time.time())
+    service_id = str(timestamp)
+    return service_id
+
+def AnnounceService(net_info, service_id, trusty='untrusty'):
     if trusty == 'untrusty':
         net_info = packNetData(net_info)
         new_service = Federation_contract.functions.AnnounceService(\
@@ -338,7 +377,7 @@ def AnnounceService(net_info, service_id, trusty):
         endpoint_uuid_2= web3.toBytes(text = net_info["uuid_2"]),\
         endpoint_name= web3.toBytes(text = net_info["name"]),\
         endpoint_net_type= web3.toBytes(text = net_info["net_type"]),\
-        endpoint_is_mgmt= net_info["is_mgmt"]).transact({'from':block_address})
+        endpoint_is_mgmt= net_info["is_mgmt"]).transact({'from':coinbase})
     else:
         uuid = net_info['uuid'].split('-')
         if len(uuid)< 6:
@@ -352,7 +391,7 @@ def AnnounceService(net_info, service_id, trusty):
         endpoint_uuid_2= web3.toBytes(text = e_uuid_2),\
         endpoint_name= web3.toBytes(text = net_info["name"]),\
         endpoint_net_type= web3.toBytes(text = net_info["net_type"]),\
-        endpoint_is_mgmt= net_info["is_mgmt"]).transact({'from':block_address})
+        endpoint_is_mgmt= net_info["is_mgmt"]).transact({'from':coinbase})
     block = web3.eth.getBlock('latest')
     blocknumber = block['number']
     #event_filter = Federation_contract.events.NewBid.createFilter(fromBlock=web3.toHex(blocknumber), argument_filters={'_id':web3.toBytes(text= service_id)})
@@ -360,11 +399,11 @@ def AnnounceService(net_info, service_id, trusty):
     return event_filter
 
 def GetBidInfo(bid_index, service_id):
-    bid_info = Federation_contract.functions.GetBid(_id= web3.toBytes(text= service_id), bider_index= bid_index, _creator=block_address).call()
+    bid_info = Federation_contract.functions.GetBid(_id= web3.toBytes(text= service_id), bider_index= bid_index, _creator=coinbase).call()
     return bid_info
 
 def ChooseProvider(bid_index, service_id):
-    chosen_provider = Federation_contract.functions.ChooseProvider(_id= web3.toBytes(text= service_id), bider_index= bid_index).transact({'from':block_address})
+    chosen_provider = Federation_contract.functions.ChooseProvider(_id= web3.toBytes(text= service_id), bider_index= bid_index).transact({'from':coinbase})
 
 def GetServiceState(serviceid):
     service_state = Federation_contract.functions.GetServiceState(_id = web3.toBytes(text= serviceid)).call()
@@ -373,7 +412,7 @@ def GetServiceState(serviceid):
 
 def GetServiceInfo(service_id, is_provider):
     service_info  = Federation_contract.functions.GetServiceInfo(_id = web3.toBytes(text= service_id),\
-                    provider= is_provider, call_address= block_address).call()
+                    provider= is_provider, call_address= coinbase).call()
     # if web3.toText(service_info[0]) == service_id:
     requirement = filterOutBytes(web3.toText(service_info[1]))
     if requirement == 'untrusty':
@@ -403,7 +442,7 @@ def PlaceBid(service_id):
     endpoint_uuid_2= web3.toBytes(text = "ready"),\
     endpoint_name= web3.toBytes(text = "04:f0:21:4f:fe:0a"),\
     endpoint_net_type= web3.toBytes(text = "running"),\
-    endpoint_is_mgmt= False).transact({'from':block_address})
+    endpoint_is_mgmt= False).transact({'from':coinbase})
     block = web3.eth.getBlock('latest')
     blocknumber = block['number']
     print("\nLatest block:",blocknumber)
@@ -414,66 +453,91 @@ def CheckWinner(service_id):
     state = GetServiceState(service_id)
     result = False
     if state == 1:
-        result = Federation_contract.functions.isWinner(_id= web3.toBytes(text= service_id), _winner= block_address).call()
+        result = Federation_contract.functions.isWinner(_id= web3.toBytes(text= service_id), _winner= coinbase).call()
         print("Am I a Winner? ", result)
     return result
 
 def ServiceDeployed(service_id):
-    result = Federation_contract.functions.ServiceDeployed(info= web3.toBytes(text= "hostapd"), _id= web3.toBytes(text= service_id)).transact({'from':block_address})
+    result = Federation_contract.functions.ServiceDeployed(info= web3.toBytes(text= "hostapd"), _id= web3.toBytes(text= service_id)).transact({'from':coinbase})
 
-def deploy_admin1():
-    a = FIMAPI(IP1)
+def deploy_provider(net_d, provider_domain):
+    print(net_d)
+    if net_d['privacy'] == "trusty": 
+        print("Trusty federation")
+        # a2 = FIMAPI(net_d["net_type"])
+        measure('trusty_info_get')
+        consumer_domain = FIMAPI(net_d["net_type"])
+        net_info = get_net_info(consumer_domain,net_d['uuid'])
+        print(consumer_domain.network.list())
+        print('Net info {}'.format(net_info))
+    else:
+        measure('untrusty_info_get')
+        print("Untrusty federation")
+        net_info = net_d
+        
+    # Create network based on the descriptor
+    # Get info if the network is created
+    print(net_d['uuid'], net_d['net_type'])
+    
+    measure('net_deploy')
+    provider_domain.network.add_network(net_info)
+    # Add the created network to the node (n1)
+    # input('press enter to network creation')
+    measure('net_add')
+    time.sleep(1)
+    provider_domain.network.add_network_to_node(net_info['uuid'], d2_n1)
+
+    measure('container_deploy')
+    time.sleep(1)
+    container_deploy(descs_d2,provider_domain)
+    return provider_domain
+
+def deploy_consumer(fog_05):
+    # a = FIMAPI(IP1)
     # Get the nodes from the domain 
-    print('Deploying on consumer nodes')
-    nodes = a.node.list()
+    # print('Deploying consumer nodes')
+    nodes = fog_05.node.list()
     if len(nodes) == 0:
         print('No nodes')
         exit(-1)
     # Print the nodes from the domain
-    print('Nodes:')
-    for n in nodes:
-        print('UUID: {}'.format(n))
-    measurement["domain"] = 'consumer'
-    measure('start')    
+    # print('Nodes:')
+    # for n in nodes:
+    #     print('UUID: {}'.format(n))
+    # measurement["domain"] = 'consumer'
+        
     time.sleep(1)
-    net_deploy(net_desc,a,d1_n1)
+    net_deploy(net_desc,fog_05,d1_n1)
     time.sleep(1)
-    net_deploy(net_desc,a,d1_n2)
+    net_deploy(net_desc,fog_05,d1_n2)
     time.sleep(1)
-    container_deploy(descs_d1,a)
+    container_deploy(descs_d1,fog_05)
     path_d = os.path.join(DESC_FOLDER,net_desc[0])
     net_d = json.loads(read(path_d))
     time.sleep(1)
-    net_info = get_net_info(a,net_d['uuid'])
+    net_info = get_net_info(fog_05,net_d['uuid'])
     restartBrainMachine()
     print("Deployment finished")
+    return net_info
 
-def consumer(trusty):
-    global mqtt_federation_trigger
-    global robot_connected
-    global measurement
+def ConnectRobotToAP(AccessPointName):
+    MQTT_MSG=json.dumps({"mac": AccessPointName})
+    client.publish("/experiment/allocation",MQTT_MSG)
+    measure('robot_migration')
+    client.subscribe("/robot/connection")
+    client.loop_start()
+    print("Robot connecting to the new AP.....")
+    while robot_connected == False:
+        time.time()
+    measure('robot_connected')
+    client.loop_stop()
+    print("Robot has connected!") 
 
-    a = FIMAPI(IP1)
-    #Configure measurements
-    measurement["domain"] = 'consumer'
-    print('Consumer on already deployed nodes')
-    nodes = a.node.list()
-    if len(nodes) == 0:
-        print('No nodes')
-        exit(-1)
-    # Print the nodes from the domain
-    print('Nodes:')
-    for n in nodes:
-        print('UUID: {}'.format(n))
-    path_d = os.path.join(DESC_FOLDER,net_desc[0])
-    net_d = json.loads(read(path_d))
-    # time.sleep(1)
-    net_info = get_net_info(a,net_d['uuid'])
+def consumer(net_info, mqtt_federation_usage):
 ########## FEDERATION STARTS HERE ###########################################################
-    service_id = generateServiceId()
+    service_id = setServiceID()
     print("SERVICE ID to be used: ", service_id)
-    if trusty == 'trusty':
-        net_info["net_type"] = IP1
+    # net_info["net_type"] = ip_addr
     print(net_info)
     if mqtt_federation_usage:
         #Configure Mqtt
@@ -491,14 +555,13 @@ def consumer(trusty):
     else: 
         print("\nSERVICE_ID:",service_id)
         debug_txt = input("\nCreate Service anouncement....(ENTER)")
-    measure('start')
+    measure("federation_start")
     start = time.time()
     bids_event = AnnounceService(net_info, service_id, trusty)
-    measure('request_federation')
     newService_event = ServiceAnnouncementEvent()
     check_event = newService_event.get_all_entries()
-    if len(check_event) > 0:
-        measure('federation_announced')
+    # if len(check_event) > 0:
+        # measure('federation_announced')
     bidderArrived = False
     while bidderArrived == False:
         new_events = bids_event.get_all_entries()
@@ -509,46 +572,30 @@ def consumer(trusty):
             bid_index = int(event['args']['max_bid_index'])
             bidderArrived = True
             if int(bid_index) < 2:
-                measure('choosing_provider')
+                measure("BidProviderChosen")
                 bid_info = GetBidInfo(int(bid_index-1), service_id)
                 print(bid_info)
                 ChooseProvider(int(bid_index)-1, service_id)
-                measure('provider_deploys')
+                # measure('provider_deploys')
                 break
     serviceDeployed = False
     while serviceDeployed == False:
         serviceDeployed = True if GetServiceState(service_id) == 2 else False
-    measure('federation_completed')
+    measure('deploymentStarted')
     serviceDeployedInfo = GetServiceInfo(service_id, False)
     end = time.time()
     print(serviceDeployedInfo)
     print("SERVICE FEDERATED!")
     print("Time it took:", int(end-start))
+    measure('deploymentStarted')
 ########## FEDERATION FINISH HERE ###########################################################
     if mqtt_federation_usage:
-        MQTT_MSG=json.dumps({"mac": serviceDeployedInfo["name"]})
-        client.publish("/experiment/allocation",MQTT_MSG)
-        measure('robot_migration')
-        client.subscribe("/robot/connection")
-        client.loop_start()
-        print("Robot connecting to the new AP.....")
-        while robot_connected == False:
-            time.time()
-        measure('robot_connected')
-        client.loop_stop()
-        print("Robot has connected!") 
-        measure('end')
-        exit(0)
+        ConnectRobotToAP(serviceDeployedInfo["name"])
     else:
-        measure('end')
         input('Press enter to exit (cointainers and networks not terminated)')
-        exit(0)
 
-def provider():
-    global measurement
-    measurement["domain"] = 'provider'
-
-    provider_domain = FIMAPI(IP2)
+def provider(fog_05):
+    provider_domain = fog_05
     
     service_id = ''
     print("\nSERVICE_ID:",service_id)
@@ -564,11 +611,11 @@ def provider():
             if GetServiceState(service_id) == 0:
                 open_services.append(service_id)
         if len(open_services) > 0:
-            measure('start')
+            measure('announcementReceived')
             print("OPEN = ", len(open_services))
             newService = True
     service_id = open_services[-1]
-    measure('bid_placed')
+    measure('BidIPsent')
     winnerChosen_event = PlaceBid(service_id)
     winnerChosen = False
     while winnerChosen == False:
@@ -576,91 +623,102 @@ def provider():
         for event in new_events:
             event_serviceid = web3.toText(event['args']['_id'])
             if event_serviceid == service_id:
-                measure('winner_choosen')
+                measure('winnerDomainReceived')
                 winnerChosen = True
                 break
     am_i_winner = CheckWinner(service_id)
     if am_i_winner == True:
-        measure('deployment_start')
+        measure('deployFedService')
         net_d = GetServiceInfo(service_id, True)
-########## FEDERATED SERVICE DEPLOYEMENT HERE ###########################################################
-        print(net_d)
-        if net_d['privacy'] == "trusty": 
-            print("Trusty federation")
-            # a2 = FIMAPI(net_d["net_type"])
-            measure('trusty_info_get')
-            consumer_domain = FIMAPI(net_d["net_type"])
-            net_info = get_net_info(consumer_domain,net_d['uuid'])
-            print(consumer_domain.network.list())
-            print('Net info {}'.format(net_info))
-        else:
-            measure('untrusty_info_get')
-            print("Untrusty federation")
-            net_info = net_d
-            
-        # Create network based on the descriptor
-        # Get info if the network is created
-        print(net_d['uuid'], net_d['net_type'])
-        
-        measure('net_deploy')
-        provider_domain.network.add_network(net_info)
-        # Add the created network to the node (n1)
-        # input('press enter to network creation')
-        measure('net_add')
-        time.sleep(1)
-        provider_domain.network.add_network_to_node(net_info['uuid'], d2_n1)
-
-        measure('container_deploy')
-        time.sleep(1)
-        container_deploy(descs_d2,provider_domain)
-######################### UNTIL HERE ####################################################################
-        measure('deployment_finished')
+        provider_domain = deploy_provider(net_d, provider_domain)
+        measure('fedServiceRunning')
         ServiceDeployed(service_id)
+        return True
     else:
         print("I am not a Winner")
-    measure('end')
-    print('EXIT (cointainers and networks not terminated)')
-    exit(0)
+        return False
+    
 
 if __name__ == '__main__':
-    print("Blockchin addresses:", eth_address)
-    print(sys.argv)
-    if len(sys.argv) < 2:
-        print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty|deploy> -register(optional)'.format(
-            sys.argv[0]))
-        exit(0)
-    if len(sys.argv) == 4:
-        if sys.argv[3] == 'mqtt':
-            mqtt_federation_usage = True
-    if sys.argv[1] == 'consumer':
-        if len(sys.argv) > 2 and sys.argv[2] == "deploy":
-            deploy_admin1()
-        else:
-            block_address = coinbase
-            domain_name = "AD1"
-            print(sys.argv[1], sys.argv[2])
-            try:
-                print("Registering....")
-                tx_hash = RegisterDomain(domain_name)
-            except ValueError as e:
-                print(e)
-            finally:
-                print("Starting consumer domain....")
-                if sys.argv[2] == 'trusty' or sys.argv[2] == 'untrusty':
-                    consumer(sys.argv[2])
-                else:
-                    print("Please use \'trusty\' or \'untrusty\' or \'deploy\' for the argument {}" .format(sys.argv[2]))
-                    exit(0)
-    elif sys.argv[1] == 'provider':
-        block_address = eth_address[1]
-        domain_name = "AD2"
-        try:
-            print("Registering....")
-            tx_hash = RegisterDomain(domain_name)
-        except ValueError as e:
-            print(e)
-        finally:
-            print("Starting provider domain....")
-            provider()
+    ip_addr = getIPaddress()
+    print("NODE IP address:",ip_addr)
+    host_id = str(ip_addr).split(".")[3]
+    setBlockchainNodeIP(host_id) 
+
+    fog_05 = SetFog05(ip_addr)
+
+    ConfigureWeb3()
+
+    while not isRegistered(host_id):
+        time.sleep(4)
+        RegisterDomain(host_id)
+    
+    mqtt_usage = False
+#CONSUMER:::::::::::::::::::::::::::::::::::::::::::::::
+    if len(sys.argv)>1:
+        if len(sys.argv) > 2 and sys.argv[2] == "mqtt":
+            mqtt_usage = True
+        measure('start')
+        net_info = deploy_consumer(fog_05)
+        net_info["net_type"] = ip_addr
+        consumer(net_info, mqtt_usage)
+        question = input("Terminate the service?")
+        if question is not "no" or is not "n":
+            remove_containers(fog_05)
+            remove_net(fog_05,d1_n1)
+            remove_net(fog_05,d1_n2)
+
+#PROVIDER:::::::::::::::::::::::::::::::::::::::::::::::
+    else:
+        measure("start")
+        running = provider(fog_05)
+        if running:
+            print("FEDERATED SERVICE IS RUNNING")
+            input("Remove containers? ...press ENTER")
+            remove_containers(fog_05)
+            remove_net(fog_05,d2_n1)
+
+    measure('end')    
+    exit(0)
+
+    # print("Blockchin addresses:", eth_address)
+    # print(sys.argv)
+    # if len(sys.argv) < 2:
+    #     print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty|deploy> -register(optional)'.format(
+    #         sys.argv[0]))
+    #     exit(0)
+    # if len(sys.argv) == 4:
+    #     if sys.argv[3] == 'mqtt':
+    #         mqtt_federation_usage = True
+    # if sys.argv[1] == 'consumer':
+    #     if len(sys.argv) > 2 and sys.argv[2] == "deploy":
+    #         deploy_admin1()
+    #     else:
+    #         coinbase = coinbase
+    #         domain_name = "AD1"
+    #         print(sys.argv[1], sys.argv[2])
+    #         try:
+    #             print("Registering....")
+    #             tx_hash = RegisterDomain(domain_name)
+    #         except ValueError as e:
+    #             print(e)
+    #         finally:
+    #             print("Starting consumer domain....")
+    #             if sys.argv[2] == 'trusty' or sys.argv[2] == 'untrusty':
+    #                 consumer(sys.argv[2])
+    #             else:
+    #                 print("Please use \'trusty\' or \'untrusty\' or \'deploy\' for the argument {}" .format(sys.argv[2]))
+    #                 exit(0)
+    # elif sys.argv[1] == 'provider':
+    #     coinbase = eth_address[1]
+    #     domain_name = "AD2"
+    #     try:
+    #         print("Registering....")
+    #         tx_hash = RegisterDomain(domain_name)
+    #     except ValueError as e:
+    #         print(e)
+    #     finally:
+    #         print("Starting provider domain....")
+    #         provider()
     else:
         exit(0)
