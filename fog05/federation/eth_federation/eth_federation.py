@@ -26,9 +26,9 @@ node_IP_address = ''
 coinbase = ''
 Federation_contract = {}
 web3 = {}
-abi_path = "../../smart-contracts/build/contracts/"
+abi_path = "../../../smart-contracts/build/contracts/"
 
-result_path= "../../results/"
+result_path= "../../../results/"
 record = {}
 
 ap_x = float(30.4075826699)
