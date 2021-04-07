@@ -8,8 +8,9 @@ import os
 import time
 import math
 from time import gmtime, strftime
-from web3 import Web3, HTTPProvider, IPCProvider
+from web3.providers.rpc import HTTPProvider
 from web3.contract import ConciseContract
+from web3.middleware import geth_poa_middleware
 
 DESC_FOLDER = 'descriptors'
 net_desc = ['net.json']
@@ -102,7 +103,7 @@ def ConfigureWeb3():
     socket_string = "ws://"+node_IP_address+":7545"
     # Configure the web3 interface to the Blockchain and SC
     web3= Web3(Web3.WebsocketProvider(socket_string))
-    web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+    # web3.middleware_onion.inject(geth_poa_middleware, layer=0)
     with open(abi_path+"Federation.json") as c_json:
         contract_json = json.load(c_json)
 
@@ -347,10 +348,6 @@ def UnpackNetData(service_info):
 
     return net_info
     
-def RegisterDomain(domain_name):
-    tx_hash = Federation_contract.functions.addOperator(Web3.toBytes(text=domain_name)).transact({'from': coinbase})
-    return tx_hash
-
 def SetFog05(ip_addr):
     a = FIMAPI(ip_addr)
     nodes = a.node.list()
@@ -493,18 +490,11 @@ def deploy_provider(net_d, provider_domain):
     return provider_domain
 
 def deploy_consumer(fog_05):
-    # a = FIMAPI(IP1)
-    # Get the nodes from the domain 
-    # print('Deploying consumer nodes')
     nodes = fog_05.node.list()
     if len(nodes) == 0:
         print('No nodes')
         exit(-1)
-    # Print the nodes from the domain
-    # print('Nodes:')
-    # for n in nodes:
-    #     print('UUID: {}'.format(n))
-    # measurement["domain"] = 'consumer'
+    
         
     time.sleep(1)
     net_deploy(net_desc,fog_05,d1_n1)
@@ -581,13 +571,12 @@ def consumer(net_info, mqtt_federation_usage):
     serviceDeployed = False
     while serviceDeployed == False:
         serviceDeployed = True if GetServiceState(service_id) == 2 else False
-    measure('deploymentStarted')
     serviceDeployedInfo = GetServiceInfo(service_id, False)
     end = time.time()
     print(serviceDeployedInfo)
     print("SERVICE FEDERATED!")
     print("Time it took:", int(end-start))
-    measure('deploymentStarted')
+    measure('RobotConnecting')
 ########## FEDERATION FINISH HERE ###########################################################
     if mqtt_federation_usage:
         ConnectRobotToAP(serviceDeployedInfo["name"])
@@ -681,44 +670,4 @@ if __name__ == '__main__':
     measure('end')    
     exit(0)
 
-    # print("Blockchin addresses:", eth_address)
-    # print(sys.argv)
-    # if len(sys.argv) < 2:
-    #     print('[Usage] {} <flag_consumer_or_provider> <trusty|untrusty|deploy> -register(optional)'.format(
-    #         sys.argv[0]))
-    #     exit(0)
-    # if len(sys.argv) == 4:
-    #     if sys.argv[3] == 'mqtt':
-    #         mqtt_federation_usage = True
-    # if sys.argv[1] == 'consumer':
-    #     if len(sys.argv) > 2 and sys.argv[2] == "deploy":
-    #         deploy_admin1()
-    #     else:
-    #         coinbase = coinbase
-    #         domain_name = "AD1"
-    #         print(sys.argv[1], sys.argv[2])
-    #         try:
-    #             print("Registering....")
-    #             tx_hash = RegisterDomain(domain_name)
-    #         except ValueError as e:
-    #             print(e)
-    #         finally:
-    #             print("Starting consumer domain....")
-    #             if sys.argv[2] == 'trusty' or sys.argv[2] == 'untrusty':
-    #                 consumer(sys.argv[2])
-    #             else:
-    #                 print("Please use \'trusty\' or \'untrusty\' or \'deploy\' for the argument {}" .format(sys.argv[2]))
-    #                 exit(0)
-    # elif sys.argv[1] == 'provider':
-    #     coinbase = eth_address[1]
-    #     domain_name = "AD2"
-    #     try:
-    #         print("Registering....")
-    #         tx_hash = RegisterDomain(domain_name)
-    #     except ValueError as e:
-    #         print(e)
-    #     finally:
-    #         print("Starting provider domain....")
-    #         provider()
-    else:
-        exit(0)
+    

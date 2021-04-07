@@ -8,7 +8,10 @@ import os
 import time
 import math
 from time import gmtime, strftime
-
+from web3 import Web3, HTTPProvider, IPCProvider
+from web3.providers.rpc import HTTPProvider
+from web3.contract import ConciseContract
+from web3.middleware import geth_poa_middleware
 
 DESC_FOLDER = 'descriptors'
 net_desc = ['net.json']
@@ -19,12 +22,16 @@ d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
 d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog03
 d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 
+federation_ContractAddress = "0x38B1Fc2FC3AE46D3f94ACEAa16e48E7e2141Ad63"
 
-
+node_IP_address = ''
+coinbase = ''
+Federation_contract = {}
+web3 = {}
+abi_path = "../../../smart-contracts/build/contracts/"
 
 result_path= "../../../results/"
 record = {}
-node_IP_address = ""
 
 ap_x = float(30.4075826699)
 ap_y = float(-7.67201633367)
@@ -88,80 +95,43 @@ def on_message(client, userdata, msg):
             robot_connected = False
 
 
-def readChainEntries():
-    read_string = "ssh "+node_IP_address+"query blog list-user\""
+def ConfigureWeb3():
+    global node_IP_address
+    global coinbase
+    global Federation_contract
+    global web3 
+    # global abi_path
+    socket_string = "ws://"+node_IP_address+":7545"
+    # Configure the web3 interface to the Blockchain and SC
+    web3= Web3(Web3.WebsocketProvider(socket_string))
+    web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+    with open(abi_path+"Federation.json") as c_json:
+        contract_json = json.load(c_json)
+
+    contract_abi = contract_json["abi"]
+    contract_address = Web3.toChecksumAddress(federation_ContractAddress)
+    Federation_contract = web3.eth.contract(abi= contract_abi, address = contract_address)
+    coinbase = web3.eth.coinbase
+
+def RegisterDomain(host_id):
+    operator_string = 'AD'+str(host_id)
+    print("Registering:", operator_string)
     try:
-        output_stream = os.popen(read_string).read()
-        error = False
+        tx_hash = Federation_contract.functions.addOperator(Web3.toBytes(text=operator_string)).transact({'from': coinbase})
+        return True
     except:
-        error = True
-        print("Blockchain unreachable")
-    if not error:
-        return output_stream
+        return False
 
-def readChainEntry(id):
-    read_string = "ssh "+node_IP_address+"query blog show-user "+ str(id) + "\""
+def isRegistered(host_id):
+    operator_string = 'AD'+str(host_id)
+    print("Is Registered?:", operator_string)
+    # if host_id == 30:
+    #     operator_string = 'AD0'
     try:
-        output_stream = os.popen(read_string).read()
-        error = False
+        print("Already registered: ", web3.toText(Federation_contract.functions.getOperatorInfo(coinbase).call()))
+        return True
     except:
-        error = True
-        print("Blockchain unreachable")
-    if not error:
-        return output_stream
-
-def getEntriesNumber():
-    output_stream = readChainEntries()
-    return int(str(output_stream).split("total: ")[1].split("\n")[0].split("\"")[1])
-
-def getLastEntry():
-    # chainData = readChainEntries()
-    max_id = getEntriesNumber()
-    last_entry_data = readChainEntry(max_id-1)
-    last_entry = str(last_entry_data).split("name: ")[1].split("\n")[0]
-    last_entry_creator = str(last_entry_data).split("creator: ")[1].split("\n")[0]
-    return last_entry, last_entry_creator, max_id
-
-def getEntry(id):
-    last_entry_data = readChainEntry(id)
-    last_entry = str(last_entry_data).split("name: ")[1].split("\n")[0]
-    return last_entry
-
-
-def sendTransaction(data):
-    tx_string = json.dumps(data)
-    print tx_string
-    tx_string = "ssh "+node_IP_address+"tx blog create-user " + tx_string + " --from alice -y\""
-    try:
-        output_stream = os.system(tx_string)
-        error = False
-    except:
-        error = True
-        print("Blockchain unreachable")
-
-def getMatchingEntry(matching_data):
-    output_stream = ReadChainEntries()
-    output_stream = str(output_stream)
-    matching_index = output_stream.find(str(matching_data))
-    if matching_index != -1:
-        matching_id_index = output_stream.find("id", matching_index-50)
-        id = int(str(output_stream[matching_id_index:(matching_id_index+10)]).split("id: ")[1].split("\n")[0].split("\"")[1])
-        return getEntry(id), id
-    else:
-        print("No entry found")
-        return "No entry", -1
-
-def getUserAddress():
-    read_string = "ssh "+node_IP_address+"keys show alice\""
-    try:
-        output_stream = os.popen(read_string).read()
-        error = False
-    except:
-        error = True
-        print("Blockchain unreachable")
-    if not error:
-        address = str(output_stream).split("address: ")[1].split("\n")[0]
-        return address
+        return False
 
 def startProfiling(node_id, state):
     start_measure_string = "none"
@@ -190,11 +160,11 @@ def stopProfiling(node_id):
 def setBlockchainNodeIP(node_id):
     global node_IP_address
     if int(node_id) == 37:
-        node_IP_address = "netcom@163.117.140.34 \"/home/netcom/go/bin/blogd "
+        node_IP_address = "163.117.140.34"
     elif int(node_id) == 245:
-        node_IP_address = "netcom@163.117.140.25\"/home/netcom/go/bin/blogd "
+        node_IP_address = "163.117.140.25"
     else: 
-        node_IP_address = "uc3m@163.117.140.35 \"/home/uc3m/go/bin/blogd "
+        node_IP_address = "163.117.140.35"
 
 def measure(label):
     global record
@@ -388,11 +358,121 @@ def SetFog05(ip_addr):
     # Print the nodes from the domain
     return a
 
+def setServiceID():
+    #Configure the domain variables
 
-def deploy_provider(winning_ip_address, net_uuid, provider_domain):
+    timestamp = int(time.time())
+    service_id = str(timestamp)
+    return service_id
+
+def AnnounceService(net_info, service_id, trusty='untrusty'):
+    if trusty == 'untrusty':
+        net_info = packNetData(net_info)
+        new_service = Federation_contract.functions.AnnounceService(\
+        _requirements= web3.toBytes(text = trusty),\
+        _id = web3.toBytes(text = service_id),\
+        endpoint_uuid_1= web3.toBytes(text = net_info["uuid_1"]),\
+        endpoint_uuid_2= web3.toBytes(text = net_info["uuid_2"]),\
+        endpoint_name= web3.toBytes(text = net_info["name"]),\
+        endpoint_net_type= web3.toBytes(text = net_info["net_type"]),\
+        endpoint_is_mgmt= net_info["is_mgmt"]).transact({'from':coinbase})
+    else:
+        uuid = net_info['uuid'].split('-')
+        if len(uuid)< 6:
+            e_uuid_1 = uuid[0] + "-" + uuid[1] + "-" + uuid[2]
+            e_uuid_2 = uuid[3] + "-" + uuid[4]
+        print("Service announced with id: ",service_id )
+        new_service = Federation_contract.functions.AnnounceService(\
+        _requirements= web3.toBytes(text = trusty),\
+        _id = web3.toBytes(text = service_id),\
+        endpoint_uuid_1= web3.toBytes(text = e_uuid_1),\
+        endpoint_uuid_2= web3.toBytes(text = e_uuid_2),\
+        endpoint_name= web3.toBytes(text = net_info["name"]),\
+        endpoint_net_type= web3.toBytes(text = net_info["net_type"]),\
+        endpoint_is_mgmt= net_info["is_mgmt"]).transact({'from':coinbase})
+    block = web3.eth.getBlock('latest')
+    blocknumber = block['number']
+    #event_filter = Federation_contract.events.NewBid.createFilter(fromBlock=web3.toHex(blocknumber), argument_filters={'_id':web3.toBytes(text= service_id)})
+    event_filter = Federation_contract.events.NewBid.createFilter(fromBlock=web3.toHex(blocknumber))
+    return event_filter
+
+def GetBidInfo(bid_index, service_id):
+    bid_info = Federation_contract.functions.GetBid(_id= web3.toBytes(text= service_id), bider_index= bid_index, _creator=coinbase).call()
+    return bid_info
+
+def ChooseProvider(bid_index, service_id):
+    chosen_provider = Federation_contract.functions.ChooseProvider(_id= web3.toBytes(text= service_id), bider_index= bid_index).transact({'from':coinbase})
+
+def GetServiceState(serviceid):
+    service_state = Federation_contract.functions.GetServiceState(_id = web3.toBytes(text= serviceid)).call()
+    #print("Service State: ",service_state)
+    return service_state
+
+def GetServiceInfo(service_id, is_provider):
+    service_info  = Federation_contract.functions.GetServiceInfo(_id = web3.toBytes(text= service_id),\
+                    provider= is_provider, call_address= coinbase).call()
+    # if web3.toText(service_info[0]) == service_id:
+    requirement = filterOutBytes(web3.toText(service_info[1]))
+    if requirement == 'untrusty':
+        net_d_info = UnpackNetData(service_info)
+        net_d_info["privacy"] = requirement
+    else:
+        net_d_info = {"uuid": (filterOutBytes(web3.toText(service_info[2]))+ "-" + filterOutBytes(web3.toText(service_info[3]))),\
+                "name": filterOutBytes(web3.toText(service_info[4])), \
+                "net_type": filterOutBytes(web3.toText(service_info[5])), \
+                "is_mgmt": service_info[6],
+                "privacy": requirement}
+        
+    return net_d_info
     
-    consumer_domain = FIMAPI(winning_ip_address)
-    net_info = get_net_info(consumer_domain,net_uuid)
+def ServiceAnnouncementEvent():
+    block = web3.eth.getBlock('latest')
+    blocknumber = block['number']
+    print("\nLatest block:",blocknumber)
+    event_filter = Federation_contract.events.ServiceAnnouncement.createFilter(fromBlock=web3.toHex(blocknumber))
+    return event_filter
+
+def PlaceBid(service_id):
+    #Function that can be extended to send provider to consumer information
+    service_price = 5
+    Federation_contract.functions.PlaceBid(_id= web3.toBytes(text= service_id), _price= service_price,\
+    endpoint_uuid_1= web3.toBytes(text = "hostapd"), \
+    endpoint_uuid_2= web3.toBytes(text = "ready"),\
+    endpoint_name= web3.toBytes(text = "04:f0:21:4f:fe:0a"),\
+    endpoint_net_type= web3.toBytes(text = "running"),\
+    endpoint_is_mgmt= False).transact({'from':coinbase})
+    block = web3.eth.getBlock('latest')
+    blocknumber = block['number']
+    print("\nLatest block:",blocknumber)
+    event_filter = Federation_contract.events.ServiceAnnouncementClosed.createFilter(fromBlock=web3.toHex(blocknumber))
+    return event_filter
+
+def CheckWinner(service_id):
+    state = GetServiceState(service_id)
+    result = False
+    if state == 1:
+        result = Federation_contract.functions.isWinner(_id= web3.toBytes(text= service_id), _winner= coinbase).call()
+        print("Am I a Winner? ", result)
+    return result
+
+def ServiceDeployed(service_id):
+    result = Federation_contract.functions.ServiceDeployed(info= web3.toBytes(text= "hostapd"), _id= web3.toBytes(text= service_id)).transact({'from':coinbase})
+
+def deploy_provider(net_d, provider_domain):
+    print(net_d)
+    if net_d['privacy'] == "trusty": 
+        print("Trusty federation")
+        # a2 = FIMAPI(net_d["net_type"])
+        measure('trusty_info_get')
+        consumer_domain = FIMAPI(net_d["net_type"])
+        net_info = get_net_info(consumer_domain,net_d['uuid'])
+        print(consumer_domain.network.list())
+        print('Net info {}'.format(net_info))
+    else:
+        measure('untrusty_info_get')
+        print("Untrusty federation")
+        net_info = net_d
+        
     # Create network based on the descriptor
     # Get info if the network is created
     print(net_d['uuid'], net_d['net_type'])
@@ -411,18 +491,11 @@ def deploy_provider(winning_ip_address, net_uuid, provider_domain):
     return provider_domain
 
 def deploy_consumer(fog_05):
-    # a = FIMAPI(IP1)
-    # Get the nodes from the domain 
-    # print('Deploying consumer nodes')
     nodes = fog_05.node.list()
     if len(nodes) == 0:
         print('No nodes')
         exit(-1)
-    # Print the nodes from the domain
-    # print('Nodes:')
-    # for n in nodes:
-    #     print('UUID: {}'.format(n))
-    # measurement["domain"] = 'consumer'
+    
         
     time.sleep(1)
     net_deploy(net_desc,fog_05,d1_n1)
@@ -451,14 +524,12 @@ def ConnectRobotToAP(AccessPointName):
     client.loop_stop()
     print("Robot has connected!") 
 
-def consumer(net_info, mqtt_federation_usage, ip_addr):
+def consumer(net_info, mqtt_federation_usage):
 ########## FEDERATION STARTS HERE ###########################################################
-    state = getEntriesNumber()
-    
-    print("SERVICE ID to be used: ", str(state))
+    service_id = setServiceID()
+    print("SERVICE ID to be used: ", service_id)
     # net_info["net_type"] = ip_addr
     print(net_info)
-    
     if mqtt_federation_usage:
         #Configure Mqtt
         client = mqtt.Client(None, clean_session=True)
@@ -477,37 +548,35 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
         debug_txt = input("\nCreate Service anouncement....(ENTER)")
     measure("federation_start")
     start = time.time()
-    new_announcement = "new:"+str(state)
-    sendTransaction(new_announcement)
-    new_bid = "bid:"+str(state)
-    last_entry = ""
-    while last_entry != new_bid:
-        bid_entry = getLastEntry()
-        last_entry = str(bid_entry[0]).split(",")[0]
-        print("...", last_entry)
-    bid_id = bid_entry[0].split(",")[0]
-    bid_creator = bid_entry[1]
-    bid_ip_address = bid_entry[0].split(",")[1].split(":")[1]
-
-    measure("BidProviderChosen"+str(int(state)%2))
-
-    winner_chosen = "winner:"+str(bid_creator)
-    winner_chosen_full_string = winner_chosen+",ip_addr:\""+ip_addr+"\",win_addr:\""+bid_creator+"\",uuid:\""+net_info['uuid']+"\""
-    print(winner_chosen_full_string)
-    sendTransaction(winner_chosen_full_string)
-    measure("BidSrcIPadded"+str(int(state)%2))
-    service_running = "federated_service:"+str(state)
-    while last_entry != service_running:
-        service_confirmation = getLastEntry()
-        last_entry = str(service_confirmation[0]).split(",")[0]
-        print("...", last_entry)
-    print("Federated Service DEPLOYED")
-        
+    bids_event = AnnounceService(net_info, service_id, trusty)
+    newService_event = ServiceAnnouncementEvent()
+    check_event = newService_event.get_all_entries()
+    # if len(check_event) > 0:
+        # measure('federation_announced')
+    bidderArrived = False
+    while bidderArrived == False:
+        new_events = bids_event.get_all_entries()
+        for event in new_events:
+            event_id = str(web3.toText(event['args']['_id']))
+            print(service_id, web3.toText(event['args']['_id']), event['args']['max_bid_index'])
+            #if event_id == web3.toText(text= service_id):
+            bid_index = int(event['args']['max_bid_index'])
+            bidderArrived = True
+            if int(bid_index) < 2:
+                measure("BidProviderChosen")
+                bid_info = GetBidInfo(int(bid_index-1), service_id)
+                print(bid_info)
+                ChooseProvider(int(bid_index)-1, service_id)
+                # measure('provider_deploys')
+                break
+    serviceDeployed = False
+    while serviceDeployed == False:
+        serviceDeployed = True if GetServiceState(service_id) == 2 else False
+    serviceDeployedInfo = GetServiceInfo(service_id, False)
     end = time.time()
-    print(bid_ip_address)
+    print(serviceDeployedInfo)
     print("SERVICE FEDERATED!")
     print("Time it took:", int(end-start))
-    
     measure('RobotConnecting')
 ########## FEDERATION FINISH HERE ###########################################################
     if mqtt_federation_usage:
@@ -517,49 +586,48 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
 
 def provider(fog_05):
     provider_domain = fog_05
-    state = getEntriesNumber()
-    new_announcement = "new"
-    new_state = ""
-    while new_state != new_announcement:
-        time.sleep(0.1)
-        last_entry = getLastEntry()
-        new_state = str(last_entry[0]).split(",")[0].split(":")[0]
-        # print(".")
-        print "."
-
-    state = last_entry[0].split("new:")[1]
-    measure("announcementReceived")
-    # last_entry = getLastEntry()
-    new_bid = "bid:"+str(last_entry[0].split("new:")[1])
-    new_bid_full_string = new_bid +",ip_addr:\""+ip_addr+"\""
     
-    print("Bid placed")
-    sendTransaction(new_bid_full_string)
-    measure("BidIPsent") 
-
-    user_address = getUserAddress()
-    last_entry = ""
-    winner_notification = "winner"
-    while last_entry != winner_notification:
-        winner_entry = getLastEntry()
-        last_entry = str(winner_entry[0]).split(",")[0].split(":")[0]
-        print("...", last_entry)
-    winning_ip_address = winner_entry[0].split(",")[1].split(":")[1]
-    winning_creator = winner_entry[0].split(",")[2].split(":")[1]
-    winning_uuid = winner_entry[0].split(",")[3].split(":")[1]
-    measure("winnerDomainReceived")
-    print str(winning_creator), str(winning_ip_address), str(user_address)
-    if winning_creator == user_address:
-        measure("deployFedService")
-        provider_domain = deploy_provider(winning_ip_address, winning_uuid, provider_domain)
-        measure("fedServiceRunning")
-        service_running = "federated_service:"+str(state)
-        sendTransaction(service_running)
+    service_id = ''
+    print("\nSERVICE_ID:",service_id)
+    debug_txt = input("\nStart listening for federation events....(ENTER)")
+    newService_event = ServiceAnnouncementEvent()
+    newService = False
+    open_services = []
+    print("Waiting for federation event....")
+    while newService == False:
+        new_events = newService_event.get_all_entries()
+        for event in new_events:
+            service_id = web3.toText(event['args']['id'])
+            if GetServiceState(service_id) == 0:
+                open_services.append(service_id)
+        if len(open_services) > 0:
+            measure('announcementReceived')
+            print("OPEN = ", len(open_services))
+            newService = True
+    service_id = open_services[-1]
+    measure('BidIPsent')
+    winnerChosen_event = PlaceBid(service_id)
+    winnerChosen = False
+    while winnerChosen == False:
+        new_events = winnerChosen_event.get_all_entries()
+        for event in new_events:
+            event_serviceid = web3.toText(event['args']['_id'])
+            if event_serviceid == service_id:
+                measure('winnerDomainReceived')
+                winnerChosen = True
+                break
+    am_i_winner = CheckWinner(service_id)
+    if am_i_winner == True:
+        measure('deployFedService')
+        net_d = GetServiceInfo(service_id, True)
+        provider_domain = deploy_provider(net_d, provider_domain)
+        measure('fedServiceRunning')
+        ServiceDeployed(service_id)
         return True
     else:
         print("I am not a Winner")
         return False
-
+    
 
 if __name__ == '__main__':
     ip_addr = getIPaddress()
@@ -569,6 +637,12 @@ if __name__ == '__main__':
 
     fog_05 = SetFog05(ip_addr)
 
+    ConfigureWeb3()
+
+    while not isRegistered(host_id):
+        time.sleep(4)
+        RegisterDomain(host_id)
+    
     mqtt_usage = False
 #CONSUMER:::::::::::::::::::::::::::::::::::::::::::::::
     if len(sys.argv)>1:
@@ -577,7 +651,7 @@ if __name__ == '__main__':
         measure('start')
         net_info = deploy_consumer(fog_05)
         net_info["net_type"] = ip_addr
-        consumer(net_info, mqtt_usage, ip_addr)
+        consumer(net_info, mqtt_usage)
         question = input("Terminate the service?")
         if question is not "no" or is not "n":
             remove_containers(fog_05)
@@ -590,10 +664,9 @@ if __name__ == '__main__':
         running = provider(fog_05)
         if running:
             print("FEDERATED SERVICE IS RUNNING")
-            question = input("Terminate the service?")
-            if question is not "no" or is not "n":
-                remove_containers(fog_05)
-                remove_net(fog_05,d2_n1)
+            input("Remove containers? ...press ENTER")
+            remove_containers(fog_05)
+            remove_net(fog_05,d2_n1)
 
     measure('end')    
     exit(0)
