@@ -550,6 +550,7 @@ def consumer(net_info, mqtt_federation_usage):
         debug_txt = input("\nCreate Service anouncement....(ENTER)")
     measure("federation_start")
     start = time.time()
+    trusty = "untrusty"
     bids_event = AnnounceService(net_info, service_id, trusty)
     newService_event = ServiceAnnouncementEvent()
     check_event = newService_event.get_all_entries()
