@@ -9,7 +9,7 @@ import time
 DESC_FOLDER = '.'
 
 n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
-n2 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
+n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog01
 
 d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
 d1_n2 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
