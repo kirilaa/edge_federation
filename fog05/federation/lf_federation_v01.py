@@ -97,6 +97,7 @@ def main(ip, ip2):
         path_d = os.path.join(DESC_FOLDER,d)
         net_d = json.loads(read(path_d))
         net_info = get_net_info(a,net_d['uuid'])
+        print(net_info)
         input('Press to create federated vxlan to second domain')
         a2.network.add_network(net_info)
         net_info2 = get_net_info(a2,net_info['uuid'])
