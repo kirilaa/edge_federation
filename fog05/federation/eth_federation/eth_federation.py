@@ -328,7 +328,7 @@ def packNetData(net_info):
     if len(uuid)< 6:
         net["uuid_1"] = uuid[0] + "-" + uuid[1] + "-" + uuid[2]
         net["uuid_2"] = uuid[3] + "-" + uuid[4]
-    net['name'] = net_info['name']+';'+net_info['net_type']+';'+str(net_info['port'])
+    net['name'] = net_info['name']+';'+net_info['net_type']+';'+str(net_info['port'])+';'+str(net_info['vni'])
     net_name_bytes = web3.toBytes(text= net['name'])
     print("Packed OK") if web3.is_encodable(_type= 'bytes32', value= net_name_bytes) else print("Packing failed!")
     net['net_type'] = net_info['mcast_addr']
@@ -342,7 +342,7 @@ def UnpackNetData(service_info):
     net_info['name'] = raw_string.split(';')[0]
     net_info['net_type'] = raw_string.split(';')[1]
     net_info['port'] = raw_string.split(';')[2]
-    # net_info['vni'] = raw_string.split(';')[3]
+    net_info['vni'] = raw_string.split(';')[3]
     net_info['mcast_addr'] = filterOutBytes(web3.toText(service_info[5]))
     net_info['is_mgmt'] = service_info[6]
 
