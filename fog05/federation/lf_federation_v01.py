@@ -99,8 +99,8 @@ def main(ip, ip2):
         net_info = get_net_info(a,net_d['uuid'])
         input('Press to create federated vxlan to second domain')
         a2.network.add_network(net_info)
-        print(net_info2)
         net_info2 = get_net_info(a2,net_info['uuid'])
+        print(net_info2)
         print('Net info {}'.format(net_info2))
         a2.network.add_network_to_node(net_info2['uuid'], d2_n1)
 
