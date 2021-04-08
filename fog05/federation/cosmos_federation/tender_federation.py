@@ -388,11 +388,13 @@ def UnpackNetData(service_info):
 def SetFog05(ip_addr):
     a = FIMAPI(ip_addr)
     nodes = a.node.list()
+    failed_fog05 = False
     if len(nodes) == 0:
         print('No nodes, Fog05 failed')
-        exit(-1)
+        failed_fog05 = True
+        # exit(-1)
     # Print the nodes from the domain
-    return a
+    return a, failed_fog05
 
 def decodeData(data):
     decoded= base64.b64decode(data)
@@ -671,6 +673,9 @@ if __name__ == '__main__':
     if len(sys.argv)>1:
         if len(sys.argv) > 2 and sys.argv[2] == "mqtt":
             mqtt_usage = True
+        if failed_fog05:
+            print("Exiting because of failed Fog05")
+            exit(-1)
         measure('start')
         net_info = deploy_consumer(fog_05)
         net_info["net_type"] = ip_addr
