@@ -653,7 +653,7 @@ if __name__ == '__main__':
         net_info["net_type"] = ip_addr
         consumer(net_info, mqtt_usage)
         question = input("Terminate the service?")
-        if question is not "no" or is not "n":
+        if question != "no" or != "n":
             remove_containers(fog_05)
             remove_net(fog_05,d1_n1)
             remove_net(fog_05,d1_n2)
@@ -664,9 +664,10 @@ if __name__ == '__main__':
         running = provider(fog_05)
         if running:
             print("FEDERATED SERVICE IS RUNNING")
-            input("Remove containers? ...press ENTER")
-            remove_containers(fog_05)
-            remove_net(fog_05,d2_n1)
+            question = input("Terminate the service?")
+            if question != "no" or != "n":
+                remove_containers(fog_05)
+                remove_net(fog_05,d2_n1)
 
     measure('end')    
     exit(0)
