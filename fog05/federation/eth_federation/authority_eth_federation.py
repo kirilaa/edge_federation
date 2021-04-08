@@ -13,7 +13,7 @@ from web3.providers.rpc import HTTPProvider
 from web3.contract import ConciseContract
 from web3.middleware import geth_poa_middleware
 
-DESC_FOLDER = 'descriptors'
+DESC_FOLDER = '../descriptors'
 net_desc = ['net.json']
 descs_d1 = ['gw.json','radius.json','ap1.json']
 descs_d2 = ['ap2.json']

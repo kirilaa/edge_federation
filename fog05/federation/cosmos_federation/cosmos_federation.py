@@ -9,8 +9,12 @@ import time
 import math
 from time import gmtime, strftime
 
+import base64
+import requests
+import json
 
-DESC_FOLDER = 'descriptors'
+
+DESC_FOLDER = '../descriptors'
 net_desc = ['net.json']
 descs_d1 = ['gw.json','radius.json','ap1.json']
 descs_d2 = ['ap2.json']
