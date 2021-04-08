@@ -31,6 +31,7 @@ def read(filepath):
 def get_net_info(api, netid):
     time.sleep(1)
     nets = api.network.list()
+    print(nets)
     ni = [x for x in nets if x['uuid'] == netid]
     if len(ni) > 0:
         return ni[0]
