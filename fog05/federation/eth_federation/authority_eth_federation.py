@@ -22,7 +22,7 @@ d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
 d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog03
 d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 
-federation_ContractAddress = "0x38B1Fc2FC3AE46D3f94ACEAa16e48E7e2141Ad63"
+federation_ContractAddress = "0x620E71fbA189CeFe03Cf9f336fCF0f99D14c57fA"
 
 node_IP_address = ''
 coinbase = ''

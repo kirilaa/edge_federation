@@ -24,7 +24,8 @@ d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 
 result_path= "../../../results/"
 record = {}
-node_IP_address = ""
+data = "\"name\""
+abci_IP = ""
 
 ap_x = float(30.4075826699)
 ap_y = float(-7.67201633367)
@@ -188,13 +189,13 @@ def stopProfiling(node_id):
         print("Measure profiling stopped")
 
 def setBlockchainNodeIP(node_id):
-    global node_IP_address
+    global abci_IP
     if int(node_id) == 37:
-        node_IP_address = "netcom@163.117.140.34 \"/home/netcom/go/bin/blogd "
+        abci_IP = "163.117.140.34"
     elif int(node_id) == 245:
-        node_IP_address = "netcom@163.117.140.25\"/home/netcom/go/bin/blogd "
+        abci_IP = "163.117.140.25"
     else: 
-        node_IP_address = "uc3m@163.117.140.35 \"/home/uc3m/go/bin/blogd "
+        abci_IP = "163.117.140.35"
 
 def measure(label):
     global record
@@ -388,81 +389,81 @@ def SetFog05(ip_addr):
     # Print the nodes from the domain
     return a
 
+def decodeData(data):
+    decoded= base64.b64decode(data)
+    return decoded.decode('ascii')
 
-def readChainEntries():
-    read_string = "ssh "+node_IP_address+"query blog list-user\""
-    try:
-        output_stream = os.popen(read_string).read()
-        error = False
-    except:
-        error = True
-        print("Blockchain unreachable")
-    if not error:
-        return output_stream
+def encodeData(data):
+    encoded = data.encode('ascii')
+    return encoded.b64encode(encoded)
 
-def readChainEntry(id):
-    read_string = "ssh "+node_IP_address+"query blog show-user "+ str(id) + "\""
-    try:
-        output_stream = os.popen(read_string).read()
-        error = False
-    except:
-        error = True
-        print("Blockchain unreachable")
-    if not error:
-        return output_stream
+def queryChain(key):
+    global abci_IP
+    key = "\"" + str(key) +"\""
+    PARAMS ={'data':key}
+    url = "http://"+abci_IP+":26657/abci_query"
+    r = requests.get(url=url, params=PARAMS)
+    response = r.json()
+    response = response['result']['response']['value']
+    # print(response)
+    if response is not None:
+        response = decodeData(response)
+    return response
 
-def getEntriesNumber():
-    output_stream = readChainEntries()
-    return int(str(output_stream).split("total: ")[1].split("\n")[0].split("\"")[1])
-
-def getLastEntry():
-    # chainData = readChainEntries()
-    max_id = getEntriesNumber()
-    last_entry_data = readChainEntry(max_id-1)
-    last_entry = str(last_entry_data).split("name: ")[1].split("\n")[0]
-    last_entry_creator = str(last_entry_data).split("creator: ")[1].split("\n")[0]
-    return last_entry, last_entry_creator, max_id
-
-def getEntry(id):
-    last_entry_data = readChainEntry(id)
-    last_entry = str(last_entry_data).split("name: ")[1].split("\n")[0]
-    return last_entry
-
-
-def sendTransaction(data):
-    tx_string = json.dumps(data)
-    print tx_string
-    tx_string = "ssh "+node_IP_address+"tx blog create-user " + tx_string + " --from alice -y\""
-    try:
-        output_stream = os.system(tx_string)
-        error = False
-    except:
-        error = True
-        print("Blockchain unreachable")
-
-def getMatchingEntry(matching_data):
-    output_stream = ReadChainEntries()
-    output_stream = str(output_stream)
-    matching_index = output_stream.find(str(matching_data))
-    if matching_index != -1:
-        matching_id_index = output_stream.find("id", matching_index-50)
-        id = int(str(output_stream[matching_id_index:(matching_id_index+10)]).split("id: ")[1].split("\n")[0].split("\"")[1])
-        return getEntry(id), id
+def decode(value, stateCount):
+    if value is not None:
+        split_string = str(stateCount) + "_"
+        value = value.split(split_string)[1]
+        return value
     else:
-        print("No entry found")
-        return "No entry", -1
+        return value
 
-def getUserAddress():
-    read_string = "ssh "+node_IP_address+"keys show alice\""
-    try:
-        output_stream = os.popen(read_string).read()
-        error = False
-    except:
-        error = True
-        print("Blockchain unreachable")
-    if not error:
-        address = str(output_stream).split("address: ")[1].split("\n")[0]
-        return address
+def encode(value, stateCount):
+    return str(stateCount)+"_"+value if value is not None else None
+
+def writeChain(key,value):
+    global abci_IP
+    data_string = "\"" + str(key)+"="+str(value) +"\""
+    PARAMS ={'tx':data_string}
+    url = "http://"+abci_IP+":26657/broadcast_tx_commit"
+    r = requests.post(url=url, data=PARAMS)
+    response = r.json()
+    if not 'error' in response:
+        return True
+    else:
+        return False
+
+def queryStatus():
+    global abci_IP
+    r = requests.get(url="http://"+abci_IP+":26657/status")
+    response = r.json()
+    return response
+
+def latestBlock():
+    r = queryStatus() 
+    return r['result']['sync_info']['latest_block_height']
+
+
+def setStateCount():
+    stateCount = queryChain("stateCount")
+    print "Inside state count"
+    if stateCount is None:
+        stateCount=int(0)
+        # print "inside none"
+        success = writeChain("stateCount", str(stateCount))
+        if success:
+            return stateCount
+        else:
+            return -1
+    else:
+        # print "inside else"
+        stateCount = int(stateCount)
+        stateCount = stateCount + 1
+        success = writeChain("stateCount", str(stateCount))
+        if success:
+            return stateCount
+        else:
+            return -1    
 
 
 def deploy_provider(winning_ip_address, net_uuid, provider_domain):
@@ -529,7 +530,7 @@ def ConnectRobotToAP(AccessPointName):
 
 def consumer(net_info, mqtt_federation_usage, ip_addr):
 ########## FEDERATION STARTS HERE ###########################################################
-    state = getEntriesNumber()
+    stateCount = setStateCount()
     
     print("SERVICE ID to be used: ", str(state))
     # net_info["net_type"] = ip_addr
@@ -553,32 +554,34 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
         debug_txt = input("\nCreate Service anouncement....(ENTER)")
     measure("federation_start")
     start = time.time()
-    new_announcement = "new:"+str(state)
-    sendTransaction(new_announcement)
-    new_bid = "bid:"+str(state)
-    last_entry = ""
-    while last_entry != new_bid:
-        bid_entry = getLastEntry()
-        last_entry = str(bid_entry[0]).split(",")[0]
-        print("...", last_entry)
-    bid_id = bid_entry[0].split(",")[0]
-    bid_creator = bid_entry[1]
-    bid_ip_address = bid_entry[0].split(",")[1].split(":")[1]
-
-    measure("BidProviderChosen"+str(int(state)%2))
-
-    winner_chosen = "winner:"+str(bid_creator)
-    winner_chosen_full_string = winner_chosen+",ip_addr:\""+ip_addr+"\",win_addr:\""+bid_creator+"\",uuid:\""+net_info['uuid']+"\""
-    print(winner_chosen_full_string)
-    sendTransaction(winner_chosen_full_string)
-    measure("BidSrcIPadded"+str(int(state)%2))
-    service_running = "federated_service:"+str(state)
-    while last_entry != service_running:
-        service_confirmation = getLastEntry()
-        last_entry = str(service_confirmation[0]).split(",")[0]
-        print("...", last_entry)
-    print("Federated Service DEPLOYED")
-        
+    newBid = encode("newBid",stateCount)
+    while queryChain(newBid) is not None:
+        time.sleep(0.1)
+    print("Bid received")
+    newBidIP = encode("newBidIp",stateCount)
+    while queryChain(newBidIP) is None:
+        time.sleep(0.5)
+    print("IP received")   
+    destIP = decode(queryChain(newBidIP), stateCount)
+    if destIP is not None:
+        print("Destination IP:", destIP)
+        destIP = str(destIP)
+    srcIP = encode("newBidSrcIP", stateCount)
+    ipAndNetInfo = ip_addr+";"+net_info['uuid']
+    src_ip_addr = encode(ipAndNetInfo,stateCount)
+    measure("BidProviderChosen")
+    chosen_BidIP = encode("choosenBidDstIP", stateCount)
+    chosen_BidDestIP = encode(destIP, stateCount)
+    if writeChain(chosen_BidIP, chosen_BidDestIP):
+        print("Chosen Dest IP address written.\n",destIP)
+    if writeChain(srcIP, src_ip_addr):
+        measure("BidSrcIPadded")
+        print("Source IP address added.\n",ip_addr)
+    serviceRunning = encode("serviceRunning", stateCount)
+    print("Waiting for confirmation of service running\n")
+    while queryChain(serviceRunning) is None:
+        time.sleep(0.1)
+          
     end = time.time()
     print(bid_ip_address)
     print("SERVICE FEDERATED!")
@@ -591,50 +594,59 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     else:
         input('Press enter to exit (cointainers and networks not terminated)')
 
-def provider(fog_05):
+def provider(fog_05, host_id):
     provider_domain = fog_05
-    state = getEntriesNumber()
-    new_announcement = "new"
-    new_state = ""
-    while new_state != new_announcement:
-        time.sleep(0.1)
-        last_entry = getLastEntry()
-        new_state = str(last_entry[0]).split(",")[0].split(":")[0]
-        # print(".")
-        print "."
+    stateCount = queryChain("stateCount")
+    while stateCount == queryChain("stateCount"):
+        time.sleep(0.5)
 
-    state = last_entry[0].split("new:")[1]
-    measure("announcementReceived")
-    # last_entry = getLastEntry()
-    new_bid = "bid:"+str(last_entry[0].split("new:")[1])
-    new_bid_full_string = new_bid +",ip_addr:\""+ip_addr+"\""
-    
+    measure("announcementReceived"+str(int(stateCount)%2))          
+    stateCount = int(queryChain("stateCount"))
+    placeBid_key = encode("newBid",stateCount)
+    placeBid_value = str(host_id)
+
+    if not writeChain(placeBid_key, placeBid_value):
+        placeBid_value = str(placeBid_value)
     print("Bid placed")
-    sendTransaction(new_bid_full_string)
-    measure("BidIPsent") 
-
-    user_address = getUserAddress()
-    last_entry = ""
-    winner_notification = "winner"
-    while last_entry != winner_notification:
-        winner_entry = getLastEntry()
-        last_entry = str(winner_entry[0]).split(",")[0].split(":")[0]
-        print("...", last_entry)
-    winning_ip_address = winner_entry[0].split(",")[1].split(":")[1]
-    winning_creator = winner_entry[0].split(",")[2].split(":")[1]
-    winning_uuid = winner_entry[0].split(",")[3].split(":")[1]
-    measure("winnerDomainReceived")
-    print str(winning_creator), str(winning_ip_address), str(user_address)
-    if winning_creator == user_address:
+    newBidIP = encode("newBidIp",stateCount)
+    destIP = ip_addr
+    ip_addr = encode(ip_addr, stateCount)
+    if int(queryChain(placeBid_key))== int(placeBid_value):
+        # measure("DstIPplaced")
+        measure("BidIPsent") 
+        writeChain(newBidIP,ip_addr)
+        print("IP address delivered")
+    choosenBidDstIP = encode("choosenBidDstIP", stateCount)
+    while queryChain(choosenBidDstIP) is None:
+        time.sleep(0.5)
+    measure("winnerDomainReceived") 
+    print("The elected provider IP received")
+    providerIP = decode(queryChain(choosenBidDstIP), stateCount)
+    print("Destinatio IP: ", str(providerIP))
+    print("hostIP: ", str(destIP))
+    
+    if str(providerIP) == str(destIP):
+        newSrcIP = encode("newBidSrcIP", stateCount)
+        while queryChain(newSrcIP) is None:
+            time.sleep(0.5)
+        print("New Src IP received")
+        srcIP = decode(queryChain(newSrcIP), stateCount)
+        print("RECEIVED:", srcIP)
+        winning_ip_address = srcIP.split(";")[0]
+        winning_uuid = srcIP.split(";")[1]
+        print("Winning IP:", winning_ip_address)
+        print("Winning UUID:", winning_uuid)
         measure("deployFedService")
         provider_domain = deploy_provider(winning_ip_address, winning_uuid, provider_domain)
         measure("fedServiceRunning")
-        service_running = "federated_service:"+str(state)
-        sendTransaction(service_running)
+        serviceRunning = encode("serviceRunning", stateCount)
+        serviceRunning_true = encode("True", stateCount)
+        if writeChain(serviceRunning, serviceRunning_true):
+            print("Notification for service running \n",serviceRunning)
         return True
     else:
-        print("I am not a Winner")
         return False
+
 
 
 if __name__ == '__main__':
@@ -644,6 +656,10 @@ if __name__ == '__main__':
     setBlockchainNodeIP(host_id) 
 
     fog_05 = SetFog05(ip_addr)
+
+    status = queryStatus()
+    if len(status) == 0:
+        sys.exit()
 
     mqtt_usage = False
 #CONSUMER:::::::::::::::::::::::::::::::::::::::::::::::
