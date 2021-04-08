@@ -473,7 +473,7 @@ def deploy_provider(net_d, provider_domain):
     else:
         measure('untrusty_info_get')
         print("Untrusty federation")
-        net_info = net_d
+        net_info = json.loads(net_d)
         
     # Create network based on the descriptor
     # Get info if the network is created
@@ -623,6 +623,7 @@ def provider(fog_05):
     if am_i_winner == True:
         measure('deployFedService')
         net_d = GetServiceInfo(service_id, True)
+        print(net_d)
         provider_domain = deploy_provider(net_d, provider_domain)
         measure('fedServiceRunning')
         ServiceDeployed(service_id)

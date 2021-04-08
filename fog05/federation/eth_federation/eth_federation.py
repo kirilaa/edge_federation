@@ -472,7 +472,7 @@ def deploy_provider(net_d, provider_domain):
     else:
         measure('untrusty_info_get')
         print("Untrusty federation")
-        net_info = net_d
+        net_info = json.loads(net_d)
         
     # Create network based on the descriptor
     # Get info if the network is created
