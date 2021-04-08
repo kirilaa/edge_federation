@@ -342,7 +342,7 @@ def UnpackNetData(service_info):
     net_info['name'] = raw_string.split(';')[0]
     net_info['net_type'] = raw_string.split(';')[1]
     net_info['port'] = raw_string.split(';')[2]
-    net_info['vni'] = raw_string.split(';')[3]
+    # net_info['vni'] = raw_string.split(';')[3]
     net_info['mcast_addr'] = filterOutBytes(web3.toText(service_info[5]))
     net_info['is_mgmt'] = service_info[6]
 
