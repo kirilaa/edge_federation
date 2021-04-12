@@ -16,12 +16,12 @@ import json
 
 DESC_FOLDER = '../descriptors'
 net_desc = ['net.json']
-descs_d1 = ['gw.json','radius.json','ap2.json']
-descs_d2 = ['ap1.json']
+descs_d1 = ['gw.json','radius.json','ap1.json']
+descs_d2 = ['ap2.json']
 
 d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
-d1_n2 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
-d2_n1 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog03
+d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog01
+d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog03
 
 
 

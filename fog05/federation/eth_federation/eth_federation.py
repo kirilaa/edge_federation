@@ -14,12 +14,12 @@ from web3.middleware import geth_poa_middleware
 
 DESC_FOLDER = '../descriptors'
 net_desc = ['net.json']
-descs_d1 = ['gw.json','radius.json','ap2.json']
-descs_d2 = ['ap1.json']
+descs_d1 = ['gw.json','radius.json','ap1.json']
+descs_d2 = ['ap2.json']
 
 d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
-d1_n2 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
-d2_n1 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog03
+d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog01
+d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog03
 
 federation_ContractAddress = "0x38B1Fc2FC3AE46D3f94ACEAa16e48E7e2141Ad63"
 
@@ -462,7 +462,7 @@ def ServiceDeployed(service_id):
 
 def deploy_provider(net_d, provider_domain):
     print(net_d)
-    # net_info = net_d
+    net_info = net_d
     if net_d['privacy'] == "trusty": 
         print("Trusty federation")
         # a2 = FIMAPI(net_d["net_type"])
@@ -476,9 +476,9 @@ def deploy_provider(net_d, provider_domain):
         print("Untrusty federation")
         # net_info = json.loads(net_d)
     
-    consumer_domain = FIMAPI(net_d["net_type"])
-    net_info = get_net_info(consumer_domain,net_d['uuid'])
-    print(consumer_domain.network.list())
+    # consumer_domain = FIMAPI(net_d["net_type"])
+    # net_info = get_net_info(consumer_domain,net_d['uuid'])
+    # print(consumer_domain.network.list())
     print('Net info {}'.format(net_info))
     # Create network based on the descriptor
     # Get info if the network is created
