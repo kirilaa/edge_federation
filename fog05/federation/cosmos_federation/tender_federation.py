@@ -539,7 +539,7 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
 ########## FEDERATION STARTS HERE ###########################################################
     stateCount = setStateCount()
     
-    print("SERVICE ID to be used: ", str(state))
+    print("SERVICE ID to be used: ", str(stateCount))
     # net_info["net_type"] = ip_addr
     print(net_info)
     
@@ -689,7 +689,7 @@ if __name__ == '__main__':
 #PROVIDER:::::::::::::::::::::::::::::::::::::::::::::::
     else:
         measure("start")
-        running = provider(fog_05)
+        running = provider(fog_05, host_id)
         if running:
             print("FEDERATED SERVICE IS RUNNING")
             question = input("Terminate the service?")
