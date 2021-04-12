@@ -134,7 +134,7 @@ def getEntry(id):
 
 def sendTransaction(data):
     tx_string = json.dumps(data)
-    print tx_string
+    print(tx_string)
     tx_string = "ssh "+node_IP_address+"tx blog create-user " + tx_string + " --from alice -y\""
     try:
         output_stream = os.system(tx_string)
@@ -263,12 +263,12 @@ def remove_containers(a):
         for d_id in discs:
             print('d_id: '+ str(d_id))
             info = a.fdu.instance_list(d_id)
-            print ('info : {}'.format(info))
+            print('info : {}'.format(info))
             if n in info:
                 time.sleep(1)
                 i_ids=info[n]
                 for iid in i_ids:
-                    print ('Terminating iid : {}'.format(iid))
+                    print('Terminating iid : {}'.format(iid))
                     #a.fdu.terminate(iid)
                     #a.fdu.offload(d_id)
                     a.fdu.stop(iid)
@@ -283,10 +283,10 @@ def remove_containers(a):
 def remove_net(a,node_id):
     nets = a.network.list()
     if nets:
-        print ('networks : {}'.format(nets))
+        print('networks : {}'.format(nets))
         for n in nets:
             net_uuid=n['uuid']
-            print ('net_id : {}'.format(net_uuid))
+            print('net_id : {}'.format(net_uuid))
             a.network.remove_network_from_node(net_uuid, node_id)
             a.network.remove_network(net_uuid)    
 
