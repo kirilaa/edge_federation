@@ -590,7 +590,7 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
         time.sleep(0.1)
           
     end = time.time()
-    print(bid_ip_address)
+    # print(bid_ip_address)
     print("SERVICE FEDERATED!")
     print("Time it took:", int(end-start))
     
