@@ -488,7 +488,7 @@ def deploy_provider(net_d, provider_domain):
     measure('net_deploy')
     print("net_info 1 = ",net_info)
     provider_domain.network.add_network(net_info)
-    net_info = get_net_info(provider_domain,net_info['uuid'])
+    # net_info = get_net_info(provider_domain,net_info['uuid'])
     print("net_info 2 = ",net_info)
     # Add the created network to the node (n1)
     # input('press enter to network creation')
