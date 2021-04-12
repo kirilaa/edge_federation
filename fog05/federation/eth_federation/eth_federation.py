@@ -462,7 +462,7 @@ def ServiceDeployed(service_id):
 
 def deploy_provider(net_d, provider_domain):
     print(net_d)
-    net_info = net_d
+    # net_info = net_d
     if net_d['privacy'] == "trusty": 
         print("Trusty federation")
         # a2 = FIMAPI(net_d["net_type"])
@@ -476,9 +476,9 @@ def deploy_provider(net_d, provider_domain):
         print("Untrusty federation")
         # net_info = json.loads(net_d)
     
-    # consumer_domain = FIMAPI(net_d["net_type"])
-    # net_info = get_net_info(consumer_domain,net_d['uuid'])
-    # print(consumer_domain.network.list())
+    consumer_domain = FIMAPI(net_d["net_type"])
+    net_info = get_net_info(consumer_domain,net_d['uuid'])
+    print(consumer_domain.network.list())
     print('Net info {}'.format(net_info))
     # Create network based on the descriptor
     # Get info if the network is created
