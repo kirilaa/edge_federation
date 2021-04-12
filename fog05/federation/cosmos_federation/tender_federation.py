@@ -601,7 +601,7 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     else:
         input('Press enter to exit (cointainers and networks not terminated)')
 
-def provider(fog_05, host_id):
+def provider(fog_05, host_id, ip_addr):
     provider_domain = fog_05
     stateCount = queryChain("stateCount")
     while stateCount == queryChain("stateCount"):
@@ -689,7 +689,7 @@ if __name__ == '__main__':
 #PROVIDER:::::::::::::::::::::::::::::::::::::::::::::::
     else:
         measure("start")
-        running = provider(fog_05, host_id)
+        running = provider(fog_05, host_id, ip_addr)
         if running:
             print("FEDERATED SERVICE IS RUNNING")
             question = input("Terminate the service?")
