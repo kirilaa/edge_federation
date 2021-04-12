@@ -660,7 +660,7 @@ if __name__ == '__main__':
             mqtt_usage = True
         if failed_fog05:
             print("Exiting because of failed Fog05")
-            exit(-1)
+            # exit(-1)
         measure('start')
         net_info = deploy_consumer(fog_05)
         net_info["net_type"] = ip_addr
