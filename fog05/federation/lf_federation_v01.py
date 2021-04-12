@@ -13,8 +13,8 @@ import time
 
 DESC_FOLDER = 'descriptors'
 net_desc = ['net.json']
-descs_d1 = ['fdu_dhcp.json','ap2.json']
-descs_d2 = ['ap1.json']
+descs_d1 = ['fdu_dhcp.json','ap1.json']
+descs_d2 = ['ap2.json']
 
 d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
 d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog01
