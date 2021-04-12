@@ -645,7 +645,7 @@ if __name__ == '__main__':
     host_id = str(ip_addr).split(".")[3]
     setBlockchainNodeIP(host_id) 
 
-    fog_05 = SetFog05(ip_addr)
+    fog_05, failed_fog05 = SetFog05(ip_addr)
 
     ConfigureWeb3()
 
@@ -660,7 +660,7 @@ if __name__ == '__main__':
             mqtt_usage = True
         if failed_fog05:
             print("Exiting because of failed Fog05")
-            # exit(-1)
+            exit(-1)
         measure('start')
         net_info = deploy_consumer(fog_05)
         net_info["net_type"] = ip_addr
