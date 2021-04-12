@@ -453,7 +453,7 @@ def latestBlock():
 
 def setStateCount():
     stateCount = queryChain("stateCount")
-    print "Inside state count"
+    print("Inside state count")
     if stateCount is None:
         stateCount=int(0)
         # print "inside none"

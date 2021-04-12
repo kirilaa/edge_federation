@@ -437,7 +437,7 @@ def getEntry(id):
 
 def sendTransaction(data):
     tx_string = json.dumps(data)
-    print tx_string
+    print(tx_string)
     tx_string = "ssh "+node_IP_address+"tx blog create-user " + tx_string + " --from alice -y\""
     try:
         output_stream = os.system(tx_string)
@@ -607,7 +607,7 @@ def provider(fog_05):
         last_entry = getLastEntry()
         new_state = str(last_entry[0]).split(",")[0].split(":")[0]
         # print(".")
-        print "."
+        print(".")
 
     state = last_entry[0].split("new:")[1]
     measure("announcementReceived")
@@ -630,7 +630,7 @@ def provider(fog_05):
     winning_creator = winner_entry[0].split(",")[2].split(":")[1]
     winning_uuid = winner_entry[0].split(",")[3].split(":")[1]
     measure("winnerDomainReceived")
-    print str(winning_creator), str(winning_ip_address), str(user_address)
+    print(str(winning_creator), str(winning_ip_address), str(user_address))
     if winning_creator == user_address:
         measure("deployFedService")
         provider_domain = deploy_provider(winning_ip_address, winning_uuid, provider_domain)
