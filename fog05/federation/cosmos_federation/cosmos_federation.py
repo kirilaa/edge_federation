@@ -477,7 +477,7 @@ def deploy_provider(winning_ip_address, net_uuid, provider_domain):
     net_info = get_net_info(consumer_domain,net_uuid)
     # Create network based on the descriptor
     # Get info if the network is created
-    print(net_d['uuid'], net_d['net_type'])
+    # print(net_d['uuid'], net_d['net_type'])
     
     measure('net_deploy')
     provider_domain.network.add_network(net_info)
