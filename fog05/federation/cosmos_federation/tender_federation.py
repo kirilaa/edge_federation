@@ -557,7 +557,7 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
         print("continued")
         client.loop_stop()
     else: 
-        print("\nSERVICE_ID:",service_id)
+        # print("\nSERVICE_ID:",service_id)
         debug_txt = input("\nCreate Service anouncement....(ENTER)")
     measure("federation_start")
     start = time.time()
