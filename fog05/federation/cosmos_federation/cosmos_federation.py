@@ -649,7 +649,7 @@ if __name__ == '__main__':
     host_id = str(ip_addr).split(".")[3]
     setBlockchainNodeIP(host_id) 
 
-    fog_05 = SetFog05(ip_addr)
+    fog_05, failed_fog05 = SetFog05(ip_addr)
 
     mqtt_usage = False
 #CONSUMER:::::::::::::::::::::::::::::::::::::::::::::::

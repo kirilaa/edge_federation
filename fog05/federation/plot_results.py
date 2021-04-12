@@ -9,7 +9,9 @@ import os
 results_path= "../../results/"
 file_type = ".html"
 
-consumer_start = "robot connecting to vAP2"
+# consumer_start = "robot connecting to vAP2"
+# consumer_start = "robot vAP2 discovery"
+consumer_start = "vAP2 info available"
 # consumer_start = "end"
 provider_start = "trusty info get"
 

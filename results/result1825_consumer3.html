@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .error {
+        color: red;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@4.8.1"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-ea161c6253898375c0ad29b969410e91"}, "mark": "bar", "encoding": {"color": {"type": "nominal", "field": "procedure", "scale": null}, "x": {"type": "quantitative", "field": "time"}, "y": {"type": "nominal", "field": "phases", "sort": "x"}}, "$schema": "https://vega.github.io/schema/vega-lite/v4.8.1.json", "datasets": {"data-ea161c6253898375c0ad29b969410e91": [{"time": 0.08321118354797363, "phases": "request federation", "procedure": "#ff7f0e"}, {"time": 3.9102790355682373, "phases": "choosing provider", "procedure": "#ff7f0e"}, {"time": 0.07019972801208496, "phases": "provider deployment of vAP2", "procedure": "#ff7f0e"}, {"time": 8.906609773635864, "phases": "federation completed", "procedure": "#ff7f0e"}, {"time": 0.08321118354797363, "phases": "choosing provider", "procedure": "white"}, {"time": 3.993490219116211, "phases": "provider deployment of vAP2", "procedure": "white"}, {"time": 4.063689947128296, "phases": "federation completed", "procedure": "white"}, {"time": 12.97029972076416, "phases": "vAP2 info available", "procedure": "white"}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div class="error" style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>

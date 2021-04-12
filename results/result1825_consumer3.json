@@ -1,0 +1,11 @@
+{
+    "domain": "consumer", 
+    "start": 1593800726.8926632, 
+    "request federation": 0.08321118354797363, 
+    "choosing provider": 3.993490219116211, 
+    "provider deployment of vAP2": 4.063689947128296, 
+    "federation completed": 12.97029972076416,  
+    "vAP2 info available": 12.995726346969604, 
+    "robot connecting to vAP2": 18.687594270706178, 
+    "robot connected to vAP2": 19.038343286514284
+}
