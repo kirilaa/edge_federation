@@ -47,7 +47,7 @@ def plot_data(data):
     procedure = generateProcedureLabels(data_keys, data["domain"], field)
 
     print(field, data["domain"], procedure)
-    plot_data = pd.DataFrame({'time':data_values, 'phases':data_keys, 'procedure':procedure})
+    plot_data = pd.DataFrame({'time':data_values[:data_values.index(field)], 'phases':data_keys[:data_keys.index(field)], 'procedure':procedure[:procedure.index(field)]})
 
     plot = alt.Chart(plot_data).mark_bar().encode( x= 'time', y= alt.Y('phases',sort='x'), color='procedure')
     # plot = alt.Chart(plot_data).mark_line(point=True).encode( x= 'time', y= alt.Y('phases',sort='x'), color='phases')
@@ -73,17 +73,21 @@ def plot_data2(data):
     data_keys = reduce_data(data.keys())
     field = consumer_start if data["domain"] == 'consumer' else provider_start
     procedure = generateProcedureLabels(data_keys, data["domain"], field)
+    field_index = data_keys.index(field)
 
 
     white_values = generateWhiteBars(data_values)
     white_keys = data_keys[1:]
     white_label = [str("white")]*len(white_keys)
     print(len(white_keys), len(white_values))    
-    white_plot = pd.DataFrame({'time':white_values, 'phases': white_keys, 'procedure':white_label})
+    # white_plot = pd.DataFrame({'time':white_values, 'phases': white_keys, 'procedure':white_label})   # FOR ALL THE LABELS, DEPLOYMENT + FEDERATION
+    # DOWN for only FEDERATION LABELS shown:
+    white_plot = pd.DataFrame({'time':white_values[:field_index], 'phases': white_keys[:field_index], 'procedure':white_label[:field_index]})
 
     data_values = generateColorBars(data_values)
     print(field, data["domain"], procedure)
-    plot_data = pd.DataFrame({'time':data_values, 'phases':data_keys, 'procedure':procedure})
+    # plot_data = pd.DataFrame({'time':data_values, 'phases':data_keys, 'procedure':procedure}) # FOR ALL THE LABELS, DEPLOYMENT + FEDERATION
+    plot_data = pd.DataFrame({'time':data_values[:field_index], 'phases':data_keys[:field_index], 'procedure':procedure[:field_index]})
     sorted_data = plot_data.append(white_plot)
 
     plot = alt.Chart(sorted_data).mark_bar().encode( x= 'time', y= alt.Y('phases',sort='x'), color=alt.Color('procedure', scale=None))
@@ -111,16 +115,19 @@ def combine_plots(consumer_data, provider_data):
     p_fed_label[provider_keys.index(provider_start):] = [str("deployment procedure")]*len(provider_keys[provider_keys.index(provider_start):])
   
 
-    c_plot_data = pd.DataFrame({'time':consumer_values, 'phases':consumer_keys, 'domain':consumer_label, 'procedure':c_fed_label})
-    p_plot_data = pd.DataFrame({'time':provider_values, 'phases':provider_keys, 'domain':provider_label, 'procedure':p_fed_label})
+    # c_plot_data = pd.DataFrame({'time':consumer_values, 'phases':consumer_keys, 'domain':consumer_label, 'procedure':c_fed_label}) #COMBINED FEDEREATION 
+    # p_plot_data = pd.DataFrame({'time':provider_values, 'phases':provider_keys, 'domain':provider_label, 'procedure':p_fed_label}) #and DEPLOYMENT LABLES
+    
+    c_plot_data = pd.DataFrame({'time':consumer_values[:consumer_keys.index(consumer_start)], 'phases':consumer_keys[:consumer_keys.index(consumer_start)], 'domain':consumer_label[:consumer_keys.index(consumer_start)], 'procedure':c_fed_label[:consumer_keys.index(consumer_start)]})
+    p_plot_data = pd.DataFrame({'time':provider_values[:provider_keys.index(provider_start)], 'phases':provider_keys[:provider_keys.index(provider_start)], 'domain':provider_label[:provider_keys.index(provider_start)], 'procedure':p_fed_label[:provider_keys.index(provider_start)]})
 
     # c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color='phases')
     # p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color='phases')
     # c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= None))
     # p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= 'time', y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= None))
     
-    c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= alt.X('time', scale=alt.Scale(domain=[0,28])), y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= alt.Legend(orient="bottom")))
-    p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= alt.X('time', scale=alt.Scale(domain=[0,28])), y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= alt.Legend(orient="bottom")))
+    c_plot = alt.Chart(c_plot_data).mark_bar().encode( x= alt.X('time', scale=alt.Scale(domain=[0,28])), y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= alt.Legend(orient="bottom"), scale=alt.Scale(domain=["federation procedure using DLT"], range=['#ff7f0e'])))
+    p_plot = alt.Chart(p_plot_data).mark_bar().encode( x= alt.X('time', scale=alt.Scale(domain=[0,28])), y= alt.Y('domain', sort='x'), color=alt.Color('procedure', legend= alt.Legend(orient="bottom"), scale=alt.Scale(domain=["federation procedure using DLT"], range=['#ff7f0e'])))
     
     plot = c_plot + p_plot
 

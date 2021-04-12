@@ -8,6 +8,7 @@ import os
 import time
 import math
 from time import gmtime, strftime
+from web3 import Web3, HTTPProvider, IPCProvider
 from web3.providers.rpc import HTTPProvider
 from web3.contract import ConciseContract
 from web3.middleware import geth_poa_middleware
