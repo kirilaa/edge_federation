@@ -558,7 +558,7 @@ def consumer(net_info, mqtt_federation_usage):
     if mqtt_federation_usage:
         #Configure Mqtt
         print("Entering MQTT")
-        time.sleep(20)
+        # time.sleep(20)
         print("Starting MQTT")
         client = mqtt.Client(None, clean_session=True)
         client.on_connect = on_connect
