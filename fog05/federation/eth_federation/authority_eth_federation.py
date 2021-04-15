@@ -12,6 +12,10 @@ from web3 import Web3, HTTPProvider, IPCProvider
 from web3.providers.rpc import HTTPProvider
 from web3.contract import ConciseContract
 from web3.middleware import geth_poa_middleware
+from os.path import expanduser
+
+HOME_DIR = expanduser("~")
+edge_federation_path = HOME_DIR+"/edge_federation/"
 
 DESC_FOLDER = '../descriptors'
 net_desc = ['net.json']
@@ -135,6 +139,7 @@ def isRegistered(host_id):
 
 def startProfiling(node_id, state):
     start_measure_string = "none"
+    local_measure_string = "screen -d -m python3 "+ edge_federation_path +"measure.py "+str(state)
     if int(node_id) == 37:
         start_measure_string = "ssh netcom@163.117.140.34 \"screen -d -m python /home/netcom/measure.py "+str(state)+"\""
     elif int(node_id) == 245:
@@ -143,10 +148,12 @@ def startProfiling(node_id, state):
         start_measure_string = "ssh uc3m@163.117.140.35 \"screen -d -m python /home/uc3m/measure.py "+str(state)+"\""
     if start_measure_string != "none":
         output_stream = os.system(start_measure_string)
+        output_stream = os.system(local_measure_string)
         print("Measure profiling started")
 
 def stopProfiling(node_id):
     stop_measure_string = "none"
+    local_measure_string = "killall screen"
     if int(node_id) == 37:
         stop_measure_string = "ssh netcom@163.117.140.34 \"killall screen\""
     elif int(node_id) == 245:
@@ -155,6 +162,7 @@ def stopProfiling(node_id):
         stop_measure_string = "ssh uc3m@163.117.140.35 \"killall screen\""
     if stop_measure_string != "none":
         output_stream = os.system(stop_measure_string)
+        output_stream = os.system(local_measure_string)
         print("Measure profiling stopped")
 
 def setBlockchainNodeIP(node_id):
