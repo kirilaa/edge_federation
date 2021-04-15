@@ -578,7 +578,7 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
         bid_ip_address = bid_entry[0].split(",")[1].split(":")[1]
         print(bid_ip_address)
         if str(bid_ip_address).split(".")[3] == str(losingDomain):
-            last_entry = ""
+            last_entry = new_announcement
     bid_id = bid_entry[0].split(",")[0]
     bid_creator = bid_entry[1]
     bid_ip_address = bid_entry[0].split(",")[1].split(":")[1]
