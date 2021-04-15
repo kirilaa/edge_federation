@@ -204,7 +204,7 @@ def setBlockchainNodeIP(node_id):
     if int(node_id) == 37:
         node_IP_address = "netcom@163.117.140.34 \"/home/netcom/go/bin/blogd "
     elif int(node_id) == 245:
-        node_IP_address = "netcom@163.117.140.25\"/home/netcom/go/bin/blogd "
+        node_IP_address = "netcom@163.117.140.25 \"/home/netcom/go/bin/blogd "
     else: 
         node_IP_address = "uc3m@163.117.140.35 \"/home/uc3m/go/bin/blogd "
 
