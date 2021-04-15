@@ -227,6 +227,12 @@ def measure(label):
         with open(result_file, 'w') as result_json:
             json.dump(record, result_json)
 
+def isLosingDomain(host_id):
+    if str(host_id) == str(losingDomain):
+        return True
+    else:
+        return False
+
 def getIPaddress():
     stream = os.popen('ip a | grep \"global dynamic\"').read()
     stream = stream.split('inet ',1)
@@ -612,7 +618,7 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     else:
         input('Press enter to exit (cointainers and networks not terminated)')
 
-def provider(fog_05):
+def provider(fog_05, host_id):
     provider_domain = fog_05
     state = getEntriesNumber()
     new_announcement = "new"
@@ -631,6 +637,10 @@ def provider(fog_05):
     new_bid_full_string = new_bid +",ip_addr:\""+ip_addr+"\""
     
     print("Bid placed")
+    if isLosingDomain(host_id):
+        print("LOOSER DOMAIN.... waiting 5 seconds")
+        time.sleep(5)
+        return False
     sendTransaction(new_bid_full_string)
     measure("BidIPsent") 
 
@@ -688,7 +698,7 @@ if __name__ == '__main__':
 #PROVIDER:::::::::::::::::::::::::::::::::::::::::::::::
     else:
         measure("start")
-        running = provider(fog_05)
+        running = provider(fog_05, host_id)
         measure('end')
         if running:
             print("FEDERATED SERVICE IS RUNNING")
