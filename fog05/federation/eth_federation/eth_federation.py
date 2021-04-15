@@ -140,7 +140,7 @@ def isRegistered(host_id):
         return False
 
 def isLosingDomain(host_id):
-    if host_id = losingDomain:
+    if str(host_id) == str(losingDomain):
         return True
     else:
         return False
