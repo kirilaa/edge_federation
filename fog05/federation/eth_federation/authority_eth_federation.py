@@ -689,6 +689,7 @@ if __name__ == '__main__':
         if len(sys.argv) > 2 and sys.argv[2] == "deploy":
             net_info = deploy_consumer(fog_05)
             print("Containers and network deployed")
+            exit(0)
         path_d = os.path.join(DESC_FOLDER,net_desc[0])
         net_d = json.loads(read(path_d))
         net_info = get_net_info(fog_05,net_d['uuid'])
