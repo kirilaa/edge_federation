@@ -696,6 +696,7 @@ if __name__ == '__main__':
         net_info = deploy_consumer(fog_05)
         net_info["net_type"] = ip_addr
         consumer(net_info, mqtt_usage, ip_addr)
+        measure('end')
         question = input("Terminate the service?")
         if question != "no":
             remove_containers(fog_05)
@@ -706,6 +707,7 @@ if __name__ == '__main__':
     else:
         measure("start")
         running = provider(fog_05, host_id, ip_addr)
+        measure('end')
         if running:
             print("FEDERATED SERVICE IS RUNNING")
             question = input("Terminate the service?")
@@ -713,7 +715,7 @@ if __name__ == '__main__':
                 remove_containers(fog_05)
                 remove_net(fog_05,d2_n1)
 
-    measure('end')    
+    # measure('end')    
     exit(0)
 
     
