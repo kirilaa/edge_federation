@@ -50,7 +50,7 @@ mqtt_federation_trigger = False
 mqtt_federation_usage = False
 entered_in_the_close_range = False
 
-start_federation_distance = float(4.0)
+start_federation_distance = float(3.1)
 
 #___________________________________________________________
 
