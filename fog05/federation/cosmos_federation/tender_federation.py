@@ -28,7 +28,7 @@ d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
 d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog01
 d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog03
 
-
+losingDomain = "245"
 
 
 result_path= "../../../results/"
@@ -200,6 +200,12 @@ def stopProfiling(node_id):
         output_stream = os.system(stop_measure_string)
         output_stream = os.system(local_measure_string)
         print("Measure profiling stopped")
+
+def isLosingDomain(host_id):
+    if host_id = losingDomain:
+        return True
+    else:
+        return Fals
 
 def setBlockchainNodeIP(node_id):
     global abci_IP
@@ -581,6 +587,8 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     if destIP is not None:
         print("Destination IP:", destIP)
         destIP = str(destIP)
+        if str(destIP).split(".")[3] == str(losingDomain):
+            destIP = None
     srcIP = encode("newBidSrcIP", stateCount)
     ipAndNetInfo = ip_addr+";"+net_info['uuid']
     src_ip_addr = encode(ipAndNetInfo,stateCount)

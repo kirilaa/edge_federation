@@ -28,6 +28,8 @@ d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog03
 
 federation_ContractAddress = "0x38B1Fc2FC3AE46D3f94ACEAa16e48E7e2141Ad63"
 
+losingDomain = "245"
+
 node_IP_address = ''
 coinbase = ''
 Federation_contract = {}
@@ -135,6 +137,12 @@ def isRegistered(host_id):
         print("Already registered: ", web3.toText(Federation_contract.functions.getOperatorInfo(coinbase).call()))
         return True
     except:
+        return False
+
+def isLosingDomain(host_id):
+    if host_id = losingDomain:
+        return True
+    else:
         return False
 
 def startProfiling(node_id, state):
@@ -602,7 +610,7 @@ def consumer(net_info, mqtt_federation_usage):
     else:
         input('Press enter to exit (cointainers and networks not terminated)')
 
-def provider(fog_05):
+def provider(fog_05, host_id):
     provider_domain = fog_05
     
     service_id = ''
@@ -652,7 +660,7 @@ if __name__ == '__main__':
     print("NODE IP address:",ip_addr)
     host_id = str(ip_addr).split(".")[3]
     setBlockchainNodeIP(host_id) 
-
+    
     fog_05, failed_fog05 = SetFog05(ip_addr)
 
     ConfigureWeb3()
@@ -682,7 +690,7 @@ if __name__ == '__main__':
 #PROVIDER:::::::::::::::::::::::::::::::::::::::::::::::
     else:
         measure("start")
-        running = provider(fog_05)
+        running = provider(fog_05, host_id)
         if running:
             print("FEDERATED SERVICE IS RUNNING")
             question = input("Terminate the service?")

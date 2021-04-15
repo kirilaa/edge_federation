@@ -28,7 +28,7 @@ d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog01
 d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog03
 
 
-
+losingDomain = "245"
 
 result_path= "../../../results/"
 record = {}
@@ -575,6 +575,9 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
         bid_entry = getLastEntry()
         last_entry = str(bid_entry[0]).split(",")[0]
         print("...", last_entry)
+        bid_ip_address = bid_entry[0].split(",")[1].split(":")[1]
+        if str(bid_ip_address).split(".")[3] == str(losingDomain):
+            last_entry = ""
     bid_id = bid_entry[0].split(",")[0]
     bid_creator = bid_entry[1]
     bid_ip_address = bid_entry[0].split(",")[1].split(":")[1]
