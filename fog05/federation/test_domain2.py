@@ -17,7 +17,7 @@ from os.path import expanduser
 HOME_DIR = expanduser("~")
 edge_federation_path = HOME_DIR+"/edge_federation/"
 
-DESC_FOLDER = '../descriptors'
+DESC_FOLDER = './descriptors'
 net_desc = ['net.json']
 descs_d1 = ['gw.json','radius.json','ap1.json']
 descs_d2 = ['ap2.json']
