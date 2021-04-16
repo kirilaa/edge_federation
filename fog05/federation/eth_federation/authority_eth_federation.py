@@ -468,7 +468,7 @@ def PlaceBid(service_id, host_id):
     event_filter = Federation_contract.events.ServiceAnnouncementClosed.createFilter(fromBlock=web3.toHex(blocknumber))
     return event_filter
 
-def ChooseAWinnerIndex(bid_index):
+def ChooseAWinnerIndex(bid_index, service_id):
     for index in range(bid_index):
         bid_info = GetBidInfo(index, service_id)
         # b'\xa9;\xdf\xcd^n\x8d\xb8\xb4]]}\xa6\xf2t\x04\xc2k\x8e.\xff\xb7;>K\xd3u\xc0pb\xff.'
@@ -608,7 +608,7 @@ def consumer(net_info, mqtt_federation_usage):
                 measure("BidProviderChosen")
                 if int(bid_index) == 2:
                     print("Checking for winner")
-                    winner_index = ChooseAWinnerIndex(bid_index)
+                    winner_index = ChooseAWinnerIndex(bid_index, service_id)
                     print("Winner chosen, index", winner_index)
                     ChooseProvider(int(winner_index), service_id)
                     # measure('provider_deploys')
