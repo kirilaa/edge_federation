@@ -30,6 +30,8 @@ federation_ContractAddress = "0x38B1Fc2FC3AE46D3f94ACEAa16e48E7e2141Ad63"
 
 losingDomain = "245"
 
+loser_coinbase = "0xcb3b50b40ee95e844cfbad182c750d6f30cf3ee6"
+
 node_IP_address = ''
 coinbase = ''
 Federation_contract = {}
@@ -466,6 +468,15 @@ def PlaceBid(service_id):
     event_filter = Federation_contract.events.ServiceAnnouncementClosed.createFilter(fromBlock=web3.toHex(blocknumber))
     return event_filter
 
+def ChooseAWinnerIndex(bid_index, service_id):
+    for index in range(bid_index):
+        bid_info = GetBidInfo(index, service_id)
+        # b'\xa9;\xdf\xcd^n\x8d\xb8\xb4]]}\xa6\xf2t\x04\xc2k\x8e.\xff\xb7;>K\xd3u\xc0pb\xff.'
+        print("Loser domain should be: "+losingDomain)
+        if str(bid_info[0]) != losingDomain:
+            return index
+    return int(bid_index-1)
+
 def CheckWinner(service_id):
     state = GetServiceState(service_id)
     result = False
@@ -591,12 +602,17 @@ def consumer(net_info, mqtt_federation_usage):
             #if event_id == web3.toText(text= service_id):
             bid_index = int(event['args']['max_bid_index'])
             bidderArrived = True
-            if int(bid_index) < 2:
+            if int(bid_index) == 2:
+                print("Checking for winner")
+                winner_index = ChooseAWinnerIndex(bid_index, service_id)
+                print("Winner chosen, index", winner_index)
+                ChooseProvider(int(winner_index), service_id)
                 measure("BidProviderChosen")
-                bid_info = GetBidInfo(int(bid_index-1), service_id)
-                print(bid_info)
-                ChooseProvider(int(bid_index)-1, service_id)
-                # measure('provider_deploys')
+
+                # bid_info = GetBidInfo(int(bid_index-1), service_id)
+                # print(bid_info)
+                # ChooseProvider(int(bid_index)-1, service_id)
+                # # measure('provider_deploys')
                 break
     serviceDeployed = False
     while serviceDeployed == False:
@@ -634,10 +650,10 @@ def provider(fog_05, host_id):
             print("OPEN = ", len(open_services))
             newService = True
     service_id = open_services[-1]
-    if isLosingDomain(host_id):
-        print("LOSING MACHINE..... sleep 5 seconds")
-        time.sleep(10)
-        return False
+    # if isLosingDomain(host_id):
+    #     print("LOSING MACHINE..... sleep 5 seconds")
+    #     time.sleep(10)
+    #     return False
     measure('BidIPsent')
     winnerChosen_event = PlaceBid(service_id)
     winnerChosen = False
