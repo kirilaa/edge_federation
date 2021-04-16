@@ -23,10 +23,12 @@ descs_d1 = ['gw.json','radius.json','ap1.json']
 descs_d2 = ['ap2.json']
 
 d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
-d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog01
-d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog03
+d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog03
+d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 
 federation_ContractAddress = "0x620E71fbA189CeFe03Cf9f336fCF0f99D14c57fA"
+
+loser_coinbase = "0xe29e8264b0c3c524b41a11ff25ff5685bb18b1af"
 
 losingDomain = "245"
 
@@ -451,12 +453,12 @@ def ServiceAnnouncementEvent():
     event_filter = Federation_contract.events.ServiceAnnouncement.createFilter(fromBlock=web3.toHex(blocknumber))
     return event_filter
 
-def PlaceBid(service_id):
+def PlaceBid(service_id, host_id):
     #Function that can be extended to send provider to consumer information
     service_price = 5
     Federation_contract.functions.PlaceBid(_id= web3.toBytes(text= service_id), _price= service_price,\
     endpoint_uuid_1= web3.toBytes(text = "hostapd"), \
-    endpoint_uuid_2= web3.toBytes(text = "ready"),\
+    endpoint_uuid_2= web3.toBytes(text = str(host_id)),\
     endpoint_name= web3.toBytes(text = "04:f0:21:4f:fe:0a"),\
     endpoint_net_type= web3.toBytes(text = "running"),\
     endpoint_is_mgmt= False).transact({'from':coinbase})
@@ -465,6 +467,15 @@ def PlaceBid(service_id):
     print("\nLatest block:",blocknumber)
     event_filter = Federation_contract.events.ServiceAnnouncementClosed.createFilter(fromBlock=web3.toHex(blocknumber))
     return event_filter
+
+def ChooseAWinnerIndex(bid_index):
+    for index in range(bid_index):
+        bid_info = GetBidInfo(index, service_id)
+        # b'\xa9;\xdf\xcd^n\x8d\xb8\xb4]]}\xa6\xf2t\x04\xc2k\x8e.\xff\xb7;>K\xd3u\xc0pb\xff.'
+        print("Loser domain should be: "+losingDomain)
+        if str(bid_info[0]) != losingDomain:
+            return index
+    return int(bid_index-1)
 
 def CheckWinner(service_id):
     state = GetServiceState(service_id)
@@ -593,13 +604,19 @@ def consumer(net_info, mqtt_federation_usage):
             #if event_id == web3.toText(text= service_id):
             bid_index = int(event['args']['max_bid_index'])
             bidderArrived = True
-            if int(bid_index) < 2:
+            if int(bid_index) <= 2:
                 measure("BidProviderChosen")
-                bid_info = GetBidInfo(int(bid_index-1), service_id)
-                print(bid_info)
-                ChooseProvider(int(bid_index)-1, service_id)
-                # measure('provider_deploys')
-                break
+                if int(bid_index) == 2:
+                    winner_index = ChooseAWinnerIndex(bid_index)
+                    ChooseProvider(int(winner_index), service_id)
+                    # measure('provider_deploys')
+                    break
+                else:
+                    bid_info = GetBidInfo(int(bid_index-1), service_id)
+                    print(bid_info)
+                    ChooseProvider(int(bid_index)-1, service_id)
+                    # measure('provider_deploys')
+                    break
     serviceDeployed = False
     while serviceDeployed == False:
         serviceDeployed = True if GetServiceState(service_id) == 2 else False
@@ -641,7 +658,7 @@ def provider(fog_05, host_id):
         time.sleep(5)
         return False
     measure('BidIPsent')
-    winnerChosen_event = PlaceBid(service_id)
+    winnerChosen_event = PlaceBid(service_id, host_id)
     winnerChosen = False
     while winnerChosen == False:
         new_events = winnerChosen_event.get_all_entries()
