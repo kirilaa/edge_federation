@@ -604,7 +604,7 @@ def consumer(net_info, mqtt_federation_usage):
             #if event_id == web3.toText(text= service_id):
             bid_index = int(event['args']['max_bid_index'])
             bidderArrived = True
-            if int(bid_index) <= 2:
+            if int(bid_index) == 2:
                 measure("BidProviderChosen")
                 if int(bid_index) == 2:
                     winner_index = ChooseAWinnerIndex(bid_index)
