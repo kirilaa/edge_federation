@@ -683,14 +683,20 @@ if __name__ == '__main__':
             mqtt_usage = True
         if failed_fog05:
             print("Exiting because of failed Fog05")
-            exit(-1)    
-        measure('start')
-        net_info = deploy_consumer(fog_05)
+            exit(-1)
+        if len(sys.argv) > 2 and sys.argv[2] == "deploy":
+            net_info = deploy_consumer(fog_05)
+            print("Containers and network deployed")
+            exit(0)
+        path_d = os.path.join(DESC_FOLDER,net_desc[0])
+        net_d = json.loads(read(path_d))
+        net_info = get_net_info(fog_05,net_d['uuid'])
         net_info["net_type"] = ip_addr
+        measure('start')
         consumer(net_info, mqtt_usage, ip_addr)
         measure('end')
         question = input("Terminate the service?")
-        if question != "no":
+        if question == "yes":
             remove_containers(fog_05)
             remove_net(fog_05,d1_n1)
             remove_net(fog_05,d1_n2)
