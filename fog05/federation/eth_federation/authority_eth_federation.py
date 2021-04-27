@@ -28,7 +28,7 @@ d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
 
 federation_ContractAddress = "0x620E71fbA189CeFe03Cf9f336fCF0f99D14c57fA"
 
-loser_coinbase = "0xe29e8264b0c3c524b41a11ff25ff5685bb18b1af"
+loser_coinbase = "0xe29E8264B0c3C524B41A11Ff25Ff5685bB18B1AF"
 
 losingDomain = "245"
 
