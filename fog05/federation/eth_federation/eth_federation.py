@@ -474,7 +474,7 @@ def ChooseAWinnerIndex(bid_index, service_id):
         # b'\xa9;\xdf\xcd^n\x8d\xb8\xb4]]}\xa6\xf2t\x04\xc2k\x8e.\xff\xb7;>K\xd3u\xc0pb\xff.'
         print("Loser domain should be: "+losingDomain+", coinbase: "+ loser_coinbase)
         print(bid_info[0])
-        if str(bid_info[0]) != loser_coinbase:
+        if str(filterOutBytes(bid_info[0])) != loser_coinbase:
             print("Returning index:", index)
             return index
     print("Returning other index:", bid_index-1)        
