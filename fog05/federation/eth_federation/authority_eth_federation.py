@@ -473,6 +473,7 @@ def ChooseAWinnerIndex(bid_index, service_id):
         bid_info = GetBidInfo(index, service_id)
         # b'\xa9;\xdf\xcd^n\x8d\xb8\xb4]]}\xa6\xf2t\x04\xc2k\x8e.\xff\xb7;>K\xd3u\xc0pb\xff.'
         print("Loser domain should be: "+losingDomain)
+        print(bid_info)
         if str(bid_info[0]) != losingDomain:
             print("Returning index:", index)
             return index
