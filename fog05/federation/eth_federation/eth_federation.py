@@ -23,8 +23,8 @@ descs_d1 = ['gw.json','radius.json','ap1.json']
 descs_d2 = ['ap2.json']
 
 d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
-d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog01
-d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog03
+d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #ap3/fog03
+d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #ap1/fog01
 
 federation_ContractAddress = "0x38B1Fc2FC3AE46D3f94ACEAa16e48E7e2141Ad63"
 
@@ -456,12 +456,15 @@ def ServiceAnnouncementEvent():
 def PlaceBid(service_id):
     #Function that can be extended to send provider to consumer information
     service_price = 5
-    Federation_contract.functions.PlaceBid(_id= web3.toBytes(text= service_id), _price= service_price,\
-    endpoint_uuid_1= web3.toBytes(text = "hostapd"), \
-    endpoint_uuid_2= web3.toBytes(text = "ready"),\
-    endpoint_name= web3.toBytes(text = "04:f0:21:4f:fe:0a"),\
-    endpoint_net_type= web3.toBytes(text = "running"),\
-    endpoint_is_mgmt= False).transact({'from':coinbase})
+    try:  
+        Federation_contract.functions.PlaceBid(_id= web3.toBytes(text= service_id), _price= service_price,\
+        endpoint_uuid_1= web3.toBytes(text = "hostapd"), \
+        endpoint_uuid_2= web3.toBytes(text = "ready"),\
+        endpoint_name= web3.toBytes(text = "04:f0:21:4f:fe:0a"),\
+        endpoint_net_type= web3.toBytes(text = "running"),\
+        endpoint_is_mgmt= False).transact({'from':coinbase})
+    except:
+        print("Service already closed")
     block = web3.eth.getBlock('latest')
     blocknumber = block['number']
     print("\nLatest block:",blocknumber)
@@ -653,9 +656,9 @@ def provider(fog_05, host_id):
             print("OPEN = ", len(open_services))
             newService = True
     service_id = open_services[-1]
-    # if isLosingDomain(host_id):
+    if isLosingDomain(host_id):
     #     print("LOSING MACHINE..... sleep 5 seconds")
-    #     time.sleep(10)
+        time.sleep(4)
     #     return False
     measure('BidIPsent')
     winnerChosen_event = PlaceBid(service_id)

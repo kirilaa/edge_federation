@@ -23,8 +23,8 @@ descs_d1 = ['gw.json','radius.json','ap1.json']
 descs_d2 = ['ap2.json']
 
 d1_n1 = 'dc02633d-491b-40b3-83be-072748142fc4' #fog02
-d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #fog03
-d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #fog01
+d1_n2 = 'c9f23aef-c745-4f58-bd59-3603fc1721b6' #ap3/fog03
+d2_n1 = '1e03d6b9-908e-44e6-9fc2-3282e38c442d' #ap1/fog01
 
 federation_ContractAddress = "0x620E71fbA189CeFe03Cf9f336fCF0f99D14c57fA"
 
@@ -456,12 +456,15 @@ def ServiceAnnouncementEvent():
 def PlaceBid(service_id, host_id):
     #Function that can be extended to send provider to consumer information
     service_price = 5
-    Federation_contract.functions.PlaceBid(_id= web3.toBytes(text= service_id), _price= service_price,\
-    endpoint_uuid_1= web3.toBytes(text = "hostapd"), \
-    endpoint_uuid_2= web3.toBytes(text = str(host_id)),\
-    endpoint_name= web3.toBytes(text = "04:f0:21:4f:fe:0a"),\
-    endpoint_net_type= web3.toBytes(text = "running"),\
-    endpoint_is_mgmt= False).transact({'from':coinbase})
+    try:
+        Federation_contract.functions.PlaceBid(_id= web3.toBytes(text= service_id), _price= service_price,\
+        endpoint_uuid_1= web3.toBytes(text = "hostapd"), \
+        endpoint_uuid_2= web3.toBytes(text = str(host_id)),\
+        endpoint_name= web3.toBytes(text = "04:f0:21:4f:fe:0a"),\
+        endpoint_net_type= web3.toBytes(text = "running"),\
+        endpoint_is_mgmt= False).transact({'from':coinbase})
+    except:
+        print("Service already closed")
     block = web3.eth.getBlock('latest')
     blocknumber = block['number']
     print("\nLatest block:",blocknumber)
