@@ -658,7 +658,7 @@ def provider(fog_05, host_id):
     service_id = open_services[-1]
     if isLosingDomain(host_id):
     #     print("LOSING MACHINE..... sleep 5 seconds")
-        time.sleep(8)
+        time.sleep(10)
     #     return False
     measure('BidIPsent')
     winnerChosen_event = PlaceBid(service_id)
