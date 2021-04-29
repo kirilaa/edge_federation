@@ -611,7 +611,7 @@ def consumer(net_info, mqtt_federation_usage):
             if int(bid_index) < 2:
                 print("Checking for winner")
                 # winner_index = ChooseAWinnerIndex(bid_index, service_id)
-                print("Winner chosen, index", winner_index)
+                # print("Winner chosen, index", winner_index)
                 # ChooseProvider(int(winner_index), service_id)
                 measure("BidProviderChosen")
 
