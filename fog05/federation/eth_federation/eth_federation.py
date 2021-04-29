@@ -608,16 +608,16 @@ def consumer(net_info, mqtt_federation_usage):
             #if event_id == web3.toText(text= service_id):
             bid_index = int(event['args']['max_bid_index'])
             bidderArrived = True
-            if int(bid_index) == 2:
+            if int(bid_index) < 2:
                 print("Checking for winner")
-                winner_index = ChooseAWinnerIndex(bid_index, service_id)
+                # winner_index = ChooseAWinnerIndex(bid_index, service_id)
                 print("Winner chosen, index", winner_index)
-                ChooseProvider(int(winner_index), service_id)
+                # ChooseProvider(int(winner_index), service_id)
                 measure("BidProviderChosen")
 
-                # bid_info = GetBidInfo(int(bid_index-1), service_id)
+                bid_info = GetBidInfo(int(bid_index-1), service_id)
                 # print(bid_info)
-                # ChooseProvider(int(bid_index)-1, service_id)
+                ChooseProvider(int(bid_index)-1, service_id)
                 # # measure('provider_deploys')
                 break
     serviceDeployed = False
@@ -658,7 +658,7 @@ def provider(fog_05, host_id):
     service_id = open_services[-1]
     if isLosingDomain(host_id):
     #     print("LOSING MACHINE..... sleep 5 seconds")
-        time.sleep(4)
+        time.sleep(8)
     #     return False
     measure('BidIPsent')
     winnerChosen_event = PlaceBid(service_id)
