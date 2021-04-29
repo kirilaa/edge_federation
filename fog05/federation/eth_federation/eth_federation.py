@@ -718,7 +718,7 @@ if __name__ == '__main__':
         consumer(net_info, mqtt_usage)
         measure('end')
         question = input("Terminate the service?")
-        if question != "no":
+        if question == "yes":
             remove_containers(fog_05)
             remove_net(fog_05,d1_n1)
             remove_net(fog_05,d1_n2)
