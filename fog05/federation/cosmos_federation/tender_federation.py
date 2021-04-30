@@ -202,10 +202,10 @@ def stopProfiling(node_id):
         print("Measure profiling stopped")
 
 def isLosingDomain(host_id):
-    if host_id = losingDomain:
+    if host_id == losingDomain:
         return True
     else:
-        return Fals
+        return False
 
 def setBlockchainNodeIP(node_id):
     global abci_IP
