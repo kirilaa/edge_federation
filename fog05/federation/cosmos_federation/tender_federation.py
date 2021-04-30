@@ -630,7 +630,7 @@ def provider(fog_05, host_id, ip_addr):
     if isLosingDomain(host_id):
         print("LOOSER DOMAIN.... waiting 5 seconds")
         time.sleep(5)
-        return False
+        # return False
     if not writeChain(placeBid_key, placeBid_value):
         placeBid_value = str(placeBid_value)
     print("Bid placed")
