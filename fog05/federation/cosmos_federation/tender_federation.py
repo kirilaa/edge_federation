@@ -551,11 +551,6 @@ def ConnectRobotToAP(AccessPointName):
 
 def consumer(net_info, mqtt_federation_usage, ip_addr):
 ########## FEDERATION STARTS HERE ###########################################################
-    stateCount = setStateCount()
-    
-    print("SERVICE ID to be used: ", str(stateCount))
-    # net_info["net_type"] = ip_addr
-    print(net_info)
     
     if mqtt_federation_usage:
         #Configure Mqtt
@@ -573,6 +568,10 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     else: 
         # print("\nSERVICE_ID:",service_id)
         debug_txt = input("\nCreate Service anouncement....(ENTER)")
+    stateCount = setStateCount()
+    print("SERVICE ID to be used: ", str(stateCount))
+    # net_info["net_type"] = ip_addr
+    print(net_info)
     measure("federation_start")
     start = time.time()
     newBid = encode("newBid",stateCount)
