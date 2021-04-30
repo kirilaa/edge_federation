@@ -627,8 +627,9 @@ def provider(fog_05, host_id, ip_addr):
     placeBid_key = encode("newBid",stateCount)
     placeBid_value = str(host_id)
     if isLosingDomain(host_id):
-        print("LOOSER DOMAIN.... waiting 5 seconds")
-        time.sleep(5)
+        # print("LOOSER DOMAIN.... waiting 5 seconds")
+        print("I am LOOSER DOMAIN")
+        # time.sleep(5)
         # return False
     if not writeChain(placeBid_key, placeBid_value):
         placeBid_value = str(placeBid_value)
