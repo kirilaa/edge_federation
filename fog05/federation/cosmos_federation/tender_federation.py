@@ -619,9 +619,10 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
 def provider(fog_05, host_id, ip_addr):
     provider_domain = fog_05
     stateCount = queryChain("stateCount")
+    print("Waiting for service announcement")
     while stateCount == queryChain("stateCount"):
         time.sleep(0.5)
-
+    print("New Announcement!", stateCount)
     measure("announcementReceived"+str(int(stateCount)%2))          
     stateCount = int(queryChain("stateCount"))
     placeBid_key = encode("newBid",stateCount)
@@ -671,6 +672,7 @@ def provider(fog_05, host_id, ip_addr):
             print("Notification for service running \n",serviceRunning)
         return True
     else:
+        print("Lost the bidding! Bye")
         return False
 
 
