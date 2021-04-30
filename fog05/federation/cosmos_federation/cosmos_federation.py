@@ -577,10 +577,11 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     sendTransaction(new_announcement)
     new_bid = "bid:"+str(state)
     last_entry = ""
+    print("Announcement send: ", new_announcement)
     while last_entry != new_bid:
         bid_entry = getLastEntry()
         last_entry = str(bid_entry[0]).split(",")[0]
-        print("...", last_entry)
+        # print("...", last_entry)
         try:
             bid_ip_address = bid_entry[0].split(",")[1].split(":")[1]
             print(bid_ip_address)
@@ -600,10 +601,11 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     sendTransaction(winner_chosen_full_string)
     measure("BidSrcIPadded"+str(int(state)%2))
     service_running = "federated_service:"+str(state)
+    print("\nFederated service is deploying.... ")
     while last_entry != service_running:
         service_confirmation = getLastEntry()
         last_entry = str(service_confirmation[0]).split(",")[0]
-        print("...", last_entry)
+        # print("...", last_entry)
     print("Federated Service DEPLOYED")
         
     end = time.time()
@@ -623,14 +625,15 @@ def provider(fog_05, host_id):
     state = getEntriesNumber()
     new_announcement = "new"
     new_state = ""
+    print("Waiting for new announcement")
     while new_state != new_announcement:
         time.sleep(0.1)
         last_entry = getLastEntry()
         new_state = str(last_entry[0]).split(",")[0].split(":")[0]
         # print(".")
-        print(".")
-
+        # print(".")
     state = last_entry[0].split("new:")[1]
+    print("New Announcement!", state)
     measure("announcementReceived")
     # last_entry = getLastEntry()
     new_bid = "bid:"+str(last_entry[0].split("new:")[1])
@@ -650,7 +653,8 @@ def provider(fog_05, host_id):
     while last_entry != winner_notification:
         winner_entry = getLastEntry()
         last_entry = str(winner_entry[0]).split(",")[0].split(":")[0]
-        print("...", last_entry)
+        # print("...", last_entry)
+    print("Winner Announced!")
     winning_ip_address = winner_entry[0].split(",")[1].split(":")[1]
     winning_creator = winner_entry[0].split(",")[2].split(":")[1]
     winning_uuid = winner_entry[0].split(",")[3].split(":")[1]
