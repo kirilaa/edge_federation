@@ -692,7 +692,7 @@ if __name__ == '__main__':
     status = queryStatus()
     if len(status) == 0:
         sys.exit()
-
+    conduct_measurments = True
     mqtt_usage = False
 #CONSUMER:::::::::::::::::::::::::::::::::::::::::::::::
     if len(sys.argv)>1:
@@ -705,13 +705,17 @@ if __name__ == '__main__':
             net_info = deploy_consumer(fog_05)
             print("Containers and network deployed")
             exit(0)
+        if len(sys.argv) > 2 and sys.argv[2] == "nomeasure":
+            conduct_measurments = False       
         path_d = os.path.join(DESC_FOLDER,net_desc[0])
         net_d = json.loads(read(path_d))
         net_info = get_net_info(fog_05,net_d['uuid'])
         net_info["net_type"] = ip_addr
-        measure('start')
+        if conduct_measurments:
+            measure('start')
         consumer(net_info, mqtt_usage, ip_addr)
-        measure('end')
+        if conduct_measurments:
+            measure('end')
         question = input("Terminate the service?")
         if question == "yes":
             remove_containers(fog_05)
@@ -720,9 +724,11 @@ if __name__ == '__main__':
 
 #PROVIDER:::::::::::::::::::::::::::::::::::::::::::::::
     else:
-        measure("start")
+        if conduct_measurments:
+            measure('start')
         running = provider(fog_05, host_id, ip_addr)
-        measure('end')
+        if conduct_measurments:
+            measure('end')
         if running:
             print("FEDERATED SERVICE IS RUNNING")
             question = input("Terminate the service?")
