@@ -633,12 +633,15 @@ def provider(fog_05, host_id, ip_addr):
     if isLosingDomain(host_id):
         # print("LOOSER DOMAIN.... waiting 5 seconds")
         print("I am LOOSER DOMAIN")
-        time.sleep(1)
+        # time.sleep(1)
+        placeBid_key = encode("newLoserBid",stateCount)
         # return False
     if not writeChain(placeBid_key, placeBid_value):
         placeBid_value = str(placeBid_value)
     print("Bid placed")
     newBidIP = encode("newBidIp",stateCount)
+    if isLosingDomain(host_id):
+        newBidIP = encode("newLoserBidIp",stateCount)
     destIP = ip_addr
     ip_addr = encode(ip_addr, stateCount)
     if int(queryChain(placeBid_key))== int(placeBid_value):
