@@ -650,7 +650,7 @@ def provider(fog_05, host_id):
     print("Bid placed")
     if isLosingDomain(host_id):
         print("LOOSER DOMAIN.... waiting 5 seconds")
-        time.sleep(3)
+        time.sleep(4)
         # return False
     sendTransaction(new_bid_full_string)
     measure("BidIPsent") 
