@@ -45,6 +45,8 @@ mqtt_federation_trigger = False
 mqtt_federation_usage = False
 entered_in_the_close_range = False
 
+mac_AP_address = "04:f0:21:4f:fe:0a"
+
 start_federation_distance = float(4.0)
 
 #___________________________________________________________
@@ -602,10 +604,15 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     measure("BidSrcIPadded"+str(int(state)%2))
     service_running = "federated_service:"+str(state)
     print("\nFederated service is deploying.... ")
+    service_confirmation_string = ""
     while last_entry != service_running:
         service_confirmation = getLastEntry()
         last_entry = str(service_confirmation[0]).split(",")[0]
+        service_confirmation_string = str(service_confirmation[0]).split(",")[1]
         # print("...", last_entry)
+    
+    mac_address = service_confirmation_string.split("mac:")[1]
+    print("MAC address: ", mac_address, " <--> 04:f0:21:4f:fe:0a")
     print("Federated Service DEPLOYED")
         
     end = time.time()
@@ -616,7 +623,7 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     measure('RobotConnecting')
 ########## FEDERATION FINISH HERE ###########################################################
     if mqtt_federation_usage:
-        ConnectRobotToAP(net_info["name"], client)
+        ConnectRobotToAP("04:f0:21:4f:fe:0a", client)
         # ConnectRobotToAP(net_info["name"])
     else:
         input('Press enter to exit (cointainers and networks not terminated)')
@@ -665,7 +672,7 @@ def provider(fog_05, host_id):
         measure("deployFedService")
         provider_domain = deploy_provider(winning_ip_address, winning_uuid, provider_domain)
         measure("fedServiceRunning")
-        service_running = "federated_service:"+str(state)
+        service_running = "federated_service:"+str(state)+",mac:"+str(mac_AP_address)
         sendTransaction(service_running)
         return True
     else:

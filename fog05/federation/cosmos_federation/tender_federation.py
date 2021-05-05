@@ -612,7 +612,7 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     measure('RobotConnecting')
 ########## FEDERATION FINISH HERE ###########################################################
     if mqtt_federation_usage:
-        ConnectRobotToAP(net_info["name"], client)
+        ConnectRobotToAP("04:f0:21:4f:fe:0a", client)
     else:
         input('Press enter to exit (cointainers and networks not terminated)')
 
