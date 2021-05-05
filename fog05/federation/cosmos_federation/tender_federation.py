@@ -536,7 +536,7 @@ def deploy_consumer(fog_05):
     print("Deployment finished")
     return net_info
 
-def ConnectRobotToAP(AccessPointName):
+def ConnectRobotToAP(AccessPointName, client):
     MQTT_MSG=json.dumps({"mac": AccessPointName})
     client.publish("/experiment/allocation",MQTT_MSG)
     measure('robot_migration')
@@ -547,7 +547,7 @@ def ConnectRobotToAP(AccessPointName):
         time.time()
     measure('robot_connected')
     client.loop_stop()
-    print("Robot has connected!") 
+    print("Robot has connected!")
 
 def consumer(net_info, mqtt_federation_usage, ip_addr):
 ########## FEDERATION STARTS HERE ###########################################################
