@@ -650,7 +650,7 @@ def provider(fog_05, host_id):
     print("Bid placed")
     if isLosingDomain(host_id):
         print("LOOSER DOMAIN.... waiting 5 seconds")
-        time.sleep(4)
+        time.sleep(10)
         # return False
     sendTransaction(new_bid_full_string)
     measure("BidIPsent") 
@@ -658,6 +658,7 @@ def provider(fog_05, host_id):
     user_address = getUserAddress()
     last_entry = ""
     winner_notification = "winner"
+    
     while last_entry != winner_notification:
         winner_entry = getLastEntry()
         last_entry = str(winner_entry[0]).split(",")[0].split(":")[0]
