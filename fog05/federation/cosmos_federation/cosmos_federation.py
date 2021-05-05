@@ -722,9 +722,9 @@ if __name__ == '__main__':
         net_d = json.loads(read(path_d))
         net_info = get_net_info(fog_05,net_d['uuid'])
         net_info["net_type"] = ip_addr
-        measure('start')
+        # measure('start')
         consumer(net_info, mqtt_usage, ip_addr)
-        measure('end')
+        # measure('end')
         question = input("Terminate the service?")
         if question == "yes":
             remove_containers(fog_05)
@@ -733,9 +733,9 @@ if __name__ == '__main__':
 
 #PROVIDER:::::::::::::::::::::::::::::::::::::::::::::::
     else:
-        measure("start")
+        # measure("start")
         running = provider(fog_05, host_id)
-        measure('end')
+        # measure('end')
         if running:
             print("FEDERATED SERVICE IS RUNNING")
             question = input("Terminate the service?")
