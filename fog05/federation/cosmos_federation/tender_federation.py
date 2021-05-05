@@ -47,6 +47,8 @@ mqtt_federation_trigger = False
 mqtt_federation_usage = False
 entered_in_the_close_range = False
 
+mac_AP_address = "04:f0:21:4f:fe:0a"
+
 start_federation_distance = float(4.0)
 
 #___________________________________________________________
@@ -603,9 +605,10 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     print("Waiting for confirmation of service running\n")
     while queryChain(serviceRunning) is None:
         time.sleep(0.1)
-          
+    mac_address = decode(queryChain(serviceRunning), stateCount)
     end = time.time()
     # print(bid_ip_address)
+    print("MAC address: ", mac_address, " <--> 04:f0:21:4f:fe:0a")
     print("SERVICE FEDERATED!")
     print("Time it took:", int(end-start))
     
@@ -667,7 +670,8 @@ def provider(fog_05, host_id, ip_addr):
         provider_domain = deploy_provider(winning_ip_address, winning_uuid, provider_domain)
         measure("fedServiceRunning")
         serviceRunning = encode("serviceRunning", stateCount)
-        serviceRunning_true = encode("True", stateCount)
+        # serviceRunning_true = encode("True", stateCount)
+        serviceRunning_true = encode(mac_AP_address, stateCount)
         if writeChain(serviceRunning, serviceRunning_true):
             print("Notification for service running \n",serviceRunning)
         return True
