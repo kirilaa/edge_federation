@@ -588,6 +588,7 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
     new_bid = "bid:"+str(state)
     last_entry = ""
     print("Announcement send: ", new_announcement)
+    counter = int(1)
     while last_entry != new_bid:
         bid_entry = getLastEntry()
         last_entry = str(bid_entry[0]).split(",")[0]
@@ -596,10 +597,13 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
             bid_ip_address = bid_entry[0].split(",")[1].split(":")[1]
             print(bid_ip_address)
             if str(bid_ip_address).split(".")[3] == str(losingDomain):
-                bid_entry = getLastEntryBack(int(1))
+                bid_entry = getLastEntryBack(counter)
                 last_entry = str(bid_entry[0]).split(",")[0]
                 bid_ip_address = bid_entry[0].split(",")[1].split(":")[1]
                 print(bid_ip_address)
+                counter=counter+1
+                if counter == 5:
+                    counter = int(5)
                 if str(bid_ip_address).split(".")[3] == str(losingDomain):
                     last_entry = new_announcement
         except:
