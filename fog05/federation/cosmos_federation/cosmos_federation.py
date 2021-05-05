@@ -445,6 +445,14 @@ def getLastEntry():
     last_entry_creator = str(last_entry_data).split("creator: ")[1].split("\n")[0]
     return last_entry, last_entry_creator, max_id
 
+def getLastEntryBack(indexBackwards):
+    # chainData = readChainEntries()
+    max_id = getEntriesNumber()-indexBackwards
+    last_entry_data = readChainEntry(max_id-1)
+    last_entry = str(last_entry_data).split("name: ")[1].split("\n")[0]
+    last_entry_creator = str(last_entry_data).split("creator: ")[1].split("\n")[0]
+    return last_entry, last_entry_creator, max_id
+
 def getEntry(id):
     last_entry_data = readChainEntry(id)
     last_entry = str(last_entry_data).split("name: ")[1].split("\n")[0]
@@ -588,7 +596,12 @@ def consumer(net_info, mqtt_federation_usage, ip_addr):
             bid_ip_address = bid_entry[0].split(",")[1].split(":")[1]
             print(bid_ip_address)
             if str(bid_ip_address).split(".")[3] == str(losingDomain):
-                last_entry = new_announcement
+                bid_entry = getLastEntryBack(int(1))
+                last_entry = str(bid_entry[0]).split(",")[0]
+                bid_ip_address = bid_entry[0].split(",")[1].split(":")[1]
+                print(bid_ip_address)
+                if str(bid_ip_address).split(".")[3] == str(losingDomain):
+                    last_entry = new_announcement
         except:
             last_entry = new_announcement    
     bid_id = bid_entry[0].split(",")[0]
@@ -650,7 +663,7 @@ def provider(fog_05, host_id):
     print("Bid placed")
     if isLosingDomain(host_id):
         print("LOOSER DOMAIN.... waiting 5 seconds")
-        time.sleep(2)
+        # time.sleep(2)
         # return False
     sendTransaction(new_bid_full_string)
     measure("BidIPsent") 
